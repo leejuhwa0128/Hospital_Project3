@@ -1,0 +1,189 @@
+/* doctorDetail.css */
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+/* TOP 헤더 */
+.top {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.top .photo {
+  width: 220px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.top .name {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.top .dept {
+  font-size: 18px;
+  color: #555;
+  margin: 8px 0 16px;
+}
+
+
+.chip {
+  display: inline-block;
+  background-color: #f1f5f9;
+  color: #374151;
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  margin-right: 6px;
+}
+
+.btns {
+  margin-top: 16px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #e5e7eb;
+  color: #111;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-right: 8px;
+}
+
+.btn.primary {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+/* 진료 스케줄 */
+/* 레이아웃 */
+.section{margin-top:32px}
+.sec-title{font-size:20px;font-weight:700;margin:0 0 10px}
+
+
+/* 캘린더 카드 */
+.cal-wrap{background:#f7faff;border:1px solid #e3e8f4;border-radius:10px;padding:14px}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px}
+.cal-nav .title{font-size:18px;font-weight:800;color:#4b67c3;opacity:.9}
+.cal-nav .nav{color:#6a87e0;font-weight:600}
+/* 표 */
+.sched-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+.sched-table col{width:calc((100% - 120px)/7)}
+.sched-table .slot-col{width:120px}
+
+.sched-table th,
+.sched-table td{
+  border:1px solid #e3e8f4;
+  padding:12px 8px;
+  text-align:center;
+  background:#fff;
+}
+
+.sched-head th{background:#eef2ff;font-weight:800}
+.sched-subhead th{background:#f5f7ff;font-weight:700}
+.slot{background:#f9fbff;font-weight:800}
+
+.month-col {
+  width: 60px;
+  background-color: #f9fafb;
+}
+
+.slot-col {
+  width: 80px;
+  background-color: #f9fafb;
+  font-weight: bold;
+}
+
+/* 아이콘 */
+.ico{display:inline-block;font-weight:900;font-size:18px;line-height:1}
+.ico-lecture{color:#e11d48}   /* ● 강의 - 빨강 */
+.ico-out{color:#f59e0b}       /* ▲ 외래 - 노랑 */
+.ico-conf{color:#10b981}      /* ◆ 학회 - 초록 */
+.ico-vac{color:#6b7280}       /* ✖ 휴가 - 회색 */
+.ico-etc{color:#3b82f6}       /* ■ 기타 - 파랑 */
+
+
+.doctor-actions{
+  display:flex;
+  gap:40px;
+  align-items:flex-start;
+  margin-top:20px;
+}
+
+.btn-group{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.btn-group .btn{
+  padding:12px 18px;
+  min-width:220px;
+  text-align:center;
+  font-size:16px;
+  border-radius:8px;
+}
+
+.btn-group .btn.primary{
+  background-color:#2563eb;
+  color:#fff;
+  font-weight:700;
+}
+
+.doctor-edu{
+  flex:1;
+   margin-left: 100px; /* 👉 오른쪽으로 이동 */
+  margin-top:-140px; /* 🔹 학력 칸 위로 당김 */
+}
+
+.edu-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:16px 18px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.04);
+}
+
+
+.edu-title{
+  font-size:18px;
+  font-weight:800;
+  margin:0 0 10px;
+}
+
+.edu-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  line-height:1.7;
+  color:#374151;
+  font-size:15px;
+}
+
+
+
+
+
+
+
+
+
+
+

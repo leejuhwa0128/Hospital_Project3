@@ -1,0 +1,117 @@
+@charset "UTF-8";
+body {
+    background: #f9fbfd;
+    font-family: 'Noto Sans KR', sans-serif;
+    padding: 60px 30px;
+    margin: 0;
+}
+
+.top-menu {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.category-tab {
+    padding: 8px 16px;
+    margin: 0 8px;
+    background: #e0eaff;
+    color: #007bff;
+    font-weight: bold;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.category-tab:hover,
+.category-tab.active-tab {
+    background: #007bff;
+    color: white;
+}
+
+.category-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0 40px;
+}
+
+.category-box a {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.category-box a:hover {
+    background: #007bff;
+    color: white;
+}
+
+.detail-box,
+.doctor-list-box {
+    padding: 40px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin: 40px auto;
+    max-width: 900px;
+}
+
+/* 제목 스타일 통일 */
+.detail-box h2,
+.doctor-list-box h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #007bff;
+    border-bottom: 2px solid #e0eaff;
+    padding-bottom: 8px;
+}
+
+/* 내부 텍스트 정리 */
+.detail-info {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: 14px;
+}
+
+
+.doctor-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+    transition: background 0.2s;
+}
+
+.doctor-card:hover {
+    background: #f7faff;
+}
+
+.profile-img img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+}
+
+.doctor-info {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.doctor-info strong {
+    font-size: 17px;
+    color: #007bff;
+}

@@ -1,0 +1,317 @@
+@charset "UTF-8";
+
+/* ===== 버튼 공통 ===== */
+.btn {
+	padding: 8px 16px;
+	background: #4a2d2d;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	font-size: 14px;
+	cursor: pointer;
+	text-decoration: none;
+	transition: background .2s;
+}
+
+.btn:hover {
+	background: #3b1f1f;
+}
+
+.btn-action {
+	display: inline-block;
+	padding: 6px 12px;
+	border: none;
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 500;
+	color: #fff;
+	cursor: pointer;
+	transition: background .2s;
+	margin: 2px;
+}
+
+.btn-view {
+	background: #334155;
+}
+
+.btn-view:hover {
+	background: #1e293b;
+}
+
+.btn-save {
+	background: #16a34a;
+}
+
+.btn-save:hover {
+	background: #15803d;
+}
+
+.btn-delete {
+	background: #dc2626;
+}
+
+.btn-delete:hover {
+	background: #b91c1c;
+}
+
+.btn-book {
+	background: #0f766e;
+}
+
+.btn-book:hover {
+	background: #0d5e57;
+}
+
+.btn-outline {
+	padding: 8px 16px;
+	background: transparent;
+	color: #4a2d2d;
+	border: 2px solid #4a2d2d;
+	border-radius: 6px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: .2s;
+}
+
+.btn-outline:hover {
+	background: #f3f4f6;
+	color: #3b1f1f;
+	border-color: #3b1f1f;
+}
+
+/* a태그 버튼 밑줄 제거 고정 */
+a.btn, a.btn-action, a.btn:link, a.btn-action:link, a.btn:visited, a.btn-action:visited,
+	a.btn:hover, a.btn-action:hover, a.btn:active, a.btn-action:active {
+	text-decoration: none !important;
+	color: #fff !important;
+}
+
+/* ===== 입력 공통 ===== */
+select, input[type="text"] {
+	padding: 6px 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 14px;
+	background: #fff;
+	transition: border-color .2s;
+}
+
+select:focus, input[type="text"]:focus {
+	border-color: #4a2d2d;
+	outline: none;
+}
+
+/* 인라인 폼 */
+.inline-form {
+	display: inline;
+}
+
+/* 검색 박스 */
+.search-box {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin: 12px 0 18px;
+}
+
+.search-box input[type="text"] {
+	width: 260px;
+}
+
+/* 페이징(공용) */
+.pagination {
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+	align-items: center;
+	margin: 18px 0 4px;
+}
+
+.pagination a, .pagination strong {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 34px;
+	height: 34px;
+	padding: 0 10px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #fff;
+	color: #374151;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.pagination a:hover {
+	background: #f3f4f6;
+}
+
+.pagination strong {
+	background: #4b5563;
+	color: #fff;
+	border-color: #4b5563;
+}
+
+/* 상태 배지 */
+.chip {
+	display: inline-block;
+	padding: 5px 12px;
+	border-radius: 9999px;
+	font-weight: 700;
+	font-size: 13px;
+	line-height: 1.2;
+}
+
+.chip-gray {
+	background: #f3f4f6;
+	color: #374151;
+} /* 접수 */
+.chip-green {
+	background: #dcfce7;
+	color: #166534;
+} /* 완료 */
+.chip-red {
+	background: #fee2e2;
+	color: #991b1b;
+} /* 거절 */
+
+/* 칩을 버튼으로 쓸 때 */
+button.chip {
+	border: 0;
+	cursor: pointer;
+	padding: 6px 14px;
+}
+
+.chip.active {
+  background: #4a2d2d;
+  color: #fff;
+}
+
+/* 전체(파랑) 칩 */
+.chip-blue {
+	background: #e0f2fe;
+	color: #075985;
+}
+
+a.chip-blue {
+  display: inline-block;
+  padding: 5px 12px; /* 기존 6px 14px → 수정 */
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #e0f2fe;
+  color: #075985;
+  border: 1px solid #93c5fd;
+  transition: 0.2s;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+a.chip-blue.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+a.chip-blue:hover {
+  background: #dbeafe;
+}
+
+button.chip.chip-blue:hover {
+	background: #dbeafe;
+}
+
+/* 기존 칩들 호버만 보완(선택) */
+button.chip.chip-gray:hover {
+	background: #e5e7eb;
+}
+
+button.chip.chip-green:hover {
+	background: #bbf7d0;
+}
+
+button.chip.chip-red:hover {
+	background: #fecaca;
+}
+
+/* 필터 칩 컨테이너(간격) */
+.filter-group {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 20px;
+}
+
+/* 진료기록 (보라) */
+.btn-record {
+	background: #6b21a8;
+}
+
+.btn-record:hover {
+	background: #581c87;
+}
+
+/* 되돌리기 (파랑) – 다른 액션 버튼과 동일 규격, 색만 다름 */
+.btn-action.btn-undo {
+	background: #2563eb;
+}
+
+.btn-action.btn-undo:hover {
+	background: #1d4ed8;
+}
+
+.view-toggle-btn {
+  padding: 8px;
+  background-color: #f4f4f4;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.view-toggle-btn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0.3);
+}
+
+.view-toggle-btn.active {
+  background-color: #e0e7ff !important;
+  border-color: #93c5fd !important;
+}
+
+.view-toggle-btn.active img {
+  filter: none !important;
+}
+
+.pagination {
+	text-align: center;
+	margin-top: 30px;
+}
+
+.page-btn {
+	display: inline-block;
+	margin: 0 4px;
+	padding: 6px 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	color: #333;
+	text-decoration: none;
+	background-color: #fff;
+	font-size: 14px;
+	transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+	background-color: #f2f2f2;
+}
+
+.page-btn.active {
+	background-color: #4a2d2d;
+	color: #fff;
+	border-color: #4a2d2d;
+	font-weight: bold;
+}

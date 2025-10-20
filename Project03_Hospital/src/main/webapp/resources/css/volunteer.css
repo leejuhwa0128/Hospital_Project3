@@ -1,0 +1,171 @@
+@charset "UTF-8";
+
+/* ===== Base ===== */
+:root {
+  --bg: #f5f7fb;
+  --ink: #111;
+  --muted: #6b7280;
+  --brand: #2563eb; /* 밝은 병원 블루(남색 느낌 제거) */
+  --line: #e5e7eb;
+  --card: #fff;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .06);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+/* ===== 레이아웃 ===== */
+.main-container { display: flex; gap: 16px; }
+
+/* 좌측 카테고리(조금 오른쪽으로 이동) */
+.sidebar {
+  width: 300px;
+  margin-left: 0px;          /* ← 화면 가장자리에서 살짝 안쪽으로 */
+}
+
+/* 콘텐츠 영역 여백 살짝 축소 */
+.content-area { padding-left: 12px; padding-right: 12px; }
+
+/* 바깥 큰 카드 영역 (현재 사이즈가 딱 좋다 하셔서 유지) */
+.vol-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 10px;
+  display: block;
+}
+
+.vol-page-card {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 24px;              /* 32 → 24: 상단 여백 살짝 줄임 */
+}
+
+/* ===== 헤더 ===== */
+.vol-head h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--brand);
+}
+.vol-head .lead {
+  margin: 0 0 14px 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ===== 카드 그리드 ===== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;                  /* 카드 간격 살짝 줄임 */
+}
+
+/* ===== 카드 ===== */
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 6px 18px rgba(0,0,0,.05);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0,0,0,.08);
+}
+.card-thumbnail img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+.card-content {
+  padding: 16px 16px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.card-title { margin: 0; font-size: 18px; font-weight: 700; }
+.card-date { margin: 0; font-size: 13px; color: var(--muted); }
+.card-description {
+  margin: 2px 0 10px 0;
+  color: #374151;
+  line-height: 1.6;
+  min-height: 44px;
+}
+
+/* 상세보기 버튼: 파란색 + 중앙 정렬 */
+.card-link {
+  display: inline-block;
+  align-self: center;         /* 가운데 배치 */
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  transition: opacity .15s ease;
+}
+.card-link:hover { opacity: .9; }
+
+/* ===== 페이징 ===== */
+.pagination{
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pagination a, .pagination span{
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid var(--brand);   /* 파란 테두리 */
+  background: #fff;
+  color: var(--brand);              /* 텍스트도 파랑 */
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.03);
+  transition: background .15s, color .15s, transform .1s, border-color .15s;
+}
+.pagination a:hover{
+  background: var(--brand);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.pagination a.active{
+  background: var(--brand);
+  color: #fff;
+  border-color: transparent;
+}
+.pagination a.disabled{ opacity: .45; pointer-events: none; }
+
+/* 화살표 버튼 (텍스트 대신 아이콘은 ::before로 표시) */
+.pagination a.arrow{
+  padding: 8px 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pagination a.arrow::before{ content: '←'; font-weight: 700; }
+.pagination a.arrow-next::before{ content: '→'; font-weight: 700; }
+
+/* ===== 반응형 ===== */
+@media (max-width: 1024px){
+  .sidebar{ margin-left: 12px; }
+  .card-grid{ grid-template-columns: repeat(2, 1fr); }
+  .card-thumbnail img{ height: 170px; }
+}
+@media (max-width: 640px){
+  .sidebar{ display:none; }          /* 모바일에서는 좌측 메뉴 숨김 (원하면 삭제) */
+  .vol-page-card{ padding: 20px; }
+  .card-grid{ grid-template-columns: 1fr; }
+  .card-thumbnail img{ height: 160px; }
+}

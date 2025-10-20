@@ -1,0 +1,37 @@
+@charset "UTF-8";
+
+/* 🔷 큰 네모 박스 스타일 */
+.tour-section-box {
+  max-width: 1400px;
+  width: 95vw;
+  margin: 20px auto;
+  padding: 60px 80px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+/* 🔷 타이틀 스타일 */
+.section-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0a2a5a;
+  margin-bottom: 20px;
+}
+
+/* 🔷 문단 강조 */
+.highlight-paragraph {
+  font-size: 17px;
+  font-weight: 500;
+  color: #1e3a8a;
+  margin-bottom: 40px;
+}
+
+.tour-video {
+  width: 100%;           /* 너비를 전체의 60%로 */
+  height: auto;
+  display: block;       /* 가운데 정렬 위해 필요 */
+  margin: 30px auto;    /* 위 여백 + 가운데 정렬 */
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}

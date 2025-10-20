@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.ReferralNoticeDAO">
+
+  <!-- 전체 목록 -->
+  <select id="selectAllNotices" resultType="com.hospital.vo.ReferralNoticeVO">
+    SELECT
+      notice_id AS noticeId,
+      title,
+      created_at AS createdAt,
+      created_by AS createdBy
+    FROM referral_notices
+    ORDER BY created_at DESC
+  </select>
+
+  <!-- 단일 조회 -->
+  <select id="selectNoticeById" parameterType="int" resultType="com.hospital.vo.ReferralNoticeVO">
+    SELECT
+      notice_id AS noticeId,
+      title,
+      created_at AS createdAt,
+      created_by AS createdBy,
+      target_role AS targetRole,
+      content
+    FROM referral_notices
+    WHERE notice_id = #{noticeId}
+  </select>
+
+  <!-- 등록 -->
+  <insert id="insertNotice" parameterType="com.hospital.vo.ReferralNoticeVO">
+    INSERT INTO referral_notices (
+      notice_id, title, content, created_at, created_by, target_role
+    ) VALUES (
+      NOTICE_SEQ.NEXTVAL,
+      #{title},
+      #{content},
+      SYSDATE,
+      #{createdBy},
+      #{targetRole}
+    )
+  </insert>
+
+  <!-- 수정 -->
+  <update id="updateNotice" parameterType="com.hospital.vo.ReferralNoticeVO">
+    UPDATE referral_notices
+    SET
+      title = #{title},
+      content = #{content},
+      target_role = #{targetRole}
+    WHERE notice_id = #{noticeId}
+  </update>
+
+  <!-- 삭제 (DAO에는 있는데 아직 이 XML에는 없음!) -->
+  <delete id="deleteNotice" parameterType="int">
+    DELETE FROM referral_notices
+    WHERE notice_id = #{noticeId}
+  </delete>
+
+ <delete id="deleteByIdConditional">
+    DELETE FROM REFERRAL_NOTICES
+    WHERE NOTICE_ID = #{id}
+    <if test="isAdmin == false">
+      AND CREATED_BY = #{userId}
+    </if>
+  </delete>
+</mapper>

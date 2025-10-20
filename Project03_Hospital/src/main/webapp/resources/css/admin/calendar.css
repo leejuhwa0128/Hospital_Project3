@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+/* 더 크게 */
+.detail-container {
+	max-width: 1500px;
+	margin: 24px auto;
+}
+
+#calendar {
+	margin: 10px 0 24px;
+}
+
+/* 타이틀 중앙 정렬 */
+.fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk {
+	flex: 1 1 0;
+}
+
+.fc .fc-toolbar-title {
+	width: 100%;
+	text-align: center;
+	font-size: 22px;
+	font-weight: 700;
+}
+
+/* ── 핵심: 숫자 잘림/역방향 문제 방지 ── */
+.fc, .fc * {
+	direction: ltr !important; /* 혹시 상위에서 rtl 전파될 때 강제 해제 */
+}
+
+.fc .fc-daygrid-event {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 6px;
+}
+
+.fc .fc-event-main {
+	overflow: visible !important;
+}
+
+.fc .fc-daygrid-event .fc-event-title {
+	white-space: nowrap;
+	text-overflow: clip;
+	font-weight: 700;
+	font-size: 14px;
+}

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- /WEB-INF/sqlmap/DonationMapper.xml -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mapper.DonationMapper">
+
+	<!-- VO 매핑 -->
+	<resultMap id="DonationMap" type="com.hospital.vo.DonationVO">
+		<id property="donationId" column="DONATION_ID" />
+		<result property="orderId" column="ORDER_ID" />
+		<result property="paymentKey" column="PAYMENT_KEY" />
+		<result property="donorName" column="DONOR_NAME" />
+		<result property="email" column="EMAIL" />
+		<result property="amount" column="AMOUNT" />
+		<result property="currency" column="CURRENCY" />
+		<result property="method" column="METHOD" />
+		<result property="status" column="STATUS" />
+		<result property="approvedAt" column="APPROVED_AT" />
+		<result property="createdAt" column="CREATED_AT" />
+		<result property="updatedAt" column="UPDATED_AT" />
+		<result property="canceledAt" column="CANCELED_AT" />
+		<result property="cancelReason" column="CANCEL_REASON" />
+		<result property="memo" column="MEMO" />
+	</resultMap>
+
+	<!-- 1. 결제 준비 (READY 상태 저장) -->
+	<insert id="insertReady"
+		parameterType="com.hospital.vo.DonationVO">
+		INSERT INTO DONATIONS (
+		order_id, donor_name, amount,
+		status, created_at
+		) VALUES (
+		#{orderId}, #{donorName}, #{amount},
+		'READY', SYSDATE
+		)
+	</insert>
+
+	<!-- 2. 결제 성공 (승인 처리) -->
+	<update id="updatePaid" parameterType="string">
+		UPDATE DONATIONS
+		SET status
+		= 'PAID',
+		approved_at = SYSDATE
+		WHERE order_id = #{orderId}
+	</update>
+
+	<!-- 3. 결제 실패 -->
+	<update id="updateFailed" parameterType="string">
+		UPDATE DONATIONS
+		SET
+		status = 'FAILED',
+		updated_at = SYSDATE
+		WHERE order_id = #{orderId}
+	</update>
+
+	<!-- 4. 주문번호로 조회 -->
+	<select id="findByOrderId" parameterType="string"
+		resultMap="DonationMap">
+		SELECT * FROM DONATIONS WHERE order_id = #{orderId}
+	</select>
+
+	<!-- 5. 전체 내역 조회 -->
+	<select id="findAll" resultMap="DonationMap">
+		SELECT * FROM DONATIONS ORDER BY
+		created_at DESC
+	</select>
+
+	<!-- 6. 결제 완료된 기부 저장 -->
+	<insert id="insertDonation"
+		parameterType="com.hospital.vo.DonationVO">
+		INSERT INTO DONATIONS (
+		donation_id, order_id,
+		donor_name, email, amount, payment_key, method,
+		approved_at, status
+		)
+		VALUES (
+		donations_seq.NEXTVAL,
+		#{orderId}, #{donorName}, #{email},
+		#{amount}, #{paymentKey}, #{method},
+		#{approvedAt}, 'PAID'
+		)
+	</insert>
+
+	<!-- 7. 기부 내역 전체 조회 (간략 필드만) -->
+	<select id="selectAllDonations"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT order_id AS orderId,
+		donor_name AS donorName,
+		email,
+		amount,
+		payment_key AS paymentKey,
+		method,
+		approved_at AS approvedAt,
+		status
+		FROM DONATIONS
+		ORDER BY approved_at DESC
+	</select>
+
+	<!-- 특정 이메일별 조회 -->
+	<select id="getDonationsByEmail" parameterType="string"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT order_id, donor_name, email, amount, method,
+		approved_at
+		FROM DONATIONS
+		WHERE email = #{email}
+		ORDER BY approved_at
+		DESC
+	</select>
+
+	<!-- 모든 기부 간략 조회 -->
+	<select id="getAllDonations"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT order_id, donor_name, amount, approved_at
+		FROM
+		DONATIONS
+		ORDER BY approved_at DESC
+	</select>
+
+	<!-- 전체 건수 조회 -->
+	<select id="countDonations" resultType="int">
+		SELECT COUNT(*) FROM
+		DONATIONS
+	</select>
+
+	<!-- 총 금액 조회 -->
+	<select id="sumDonations" resultType="int">
+		SELECT NVL(SUM(amount), 0)
+		FROM DONATIONS
+	</select>
+
+	<!-- 기부 내역 페이징 조회 -->
+	<select id="getDonationsByPage" parameterType="map"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT * FROM (
+		SELECT d.*, ROWNUM rnum
+		FROM (
+		SELECT
+		DONATION_ID,
+		ORDER_ID,
+		DONOR_NAME,
+		EMAIL,
+		AMOUNT,
+		STATUS,
+		APPROVED_AT,
+		CREATED_AT
+		FROM DONATIONS
+		ORDER BY DONATION_ID DESC
+		) d
+		WHERE ROWNUM &lt;=
+		#{endRow}
+		)
+		WHERE rnum &gt;= #{startRow}
+	</select>
+
+	<!-- ✅ 후원자명 검색 (페이징) -->
+	<select id="getDonationsByDonorName"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT * FROM (
+		SELECT d.*, ROWNUM rnum
+		FROM (
+		SELECT
+		DONATION_ID,
+		ORDER_ID,
+		DONOR_NAME,
+		EMAIL,
+		AMOUNT,
+		STATUS,
+		APPROVED_AT,
+		CREATED_AT
+		FROM donations
+		WHERE DONOR_NAME LIKE '%' || #{donorName} ||
+		'%'
+		ORDER BY DONATION_ID DESC
+		) d
+		WHERE ROWNUM &lt;= #{endRow}
+		)
+		WHERE rnum
+		&gt;= #{startRow}
+	</select>
+
+	<!-- ✅ 기간 검색 (페이징) -->
+	<select id="getDonationsByPeriod"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT *
+		FROM (
+		SELECT d.*, ROWNUM rnum
+		FROM (
+		SELECT
+		DONATION_ID, ORDER_ID, DONOR_NAME, EMAIL, AMOUNT, STATUS, APPROVED_AT, CREATED_AT
+		FROM donations
+		WHERE APPROVED_AT BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD')
+		AND TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+		ORDER BY DONATION_ID DESC
+		) d
+		WHERE ROWNUM &lt;= #{endRow}
+		)
+		WHERE rnum &gt;= #{startRow}
+	</select>
+
+	<!-- ✅ 통합 검색 (후원자명 + 기간 + 페이징) -->
+	<select id="getDonationsByFilter"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT * FROM (
+		SELECT d.*, ROWNUM rnum
+		FROM (
+		SELECT
+		DONATION_ID,
+		ORDER_ID,
+		DONOR_NAME,
+		EMAIL,
+		AMOUNT,
+		STATUS,
+		APPROVED_AT,
+		CREATED_AT
+		FROM
+		DONATIONS
+		WHERE 1=1
+		<if test="donorName != null and donorName != ''">
+			AND DONOR_NAME LIKE '%' || #{donorName} || '%'
+		</if>
+		<if
+			test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+			AND APPROVED_AT BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD')
+			AND
+			TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+		</if>
+		ORDER BY DONATION_ID DESC
+		) d
+		WHERE ROWNUM &lt;= #{endRow}
+		)
+		WHERE rnum
+		&gt;= #{startRow}
+	</select>
+
+	<select id="selectDonationsByDate" parameterType="map"
+		resultType="com.hospital.vo.DonationVO">
+		SELECT *
+		FROM DONATIONS
+		WHERE APPROVED_AT BETWEEN
+		TO_DATE(#{startDate}, 'YYYY-MM-DD')
+		AND TO_DATE(#{endDate},
+		'YYYY-MM-DD') + 1
+		ORDER BY APPROVED_AT DESC
+	</select>
+
+
+</mapper>

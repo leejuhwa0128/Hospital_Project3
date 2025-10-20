@@ -1,0 +1,72 @@
+@charset "EUC-KR";
+/* /resources/css/doctor.css */
+* { box-sizing: border-box; }
+body { font-family: 'Noto Sans KR', sans-serif; color:#222; margin:0; }
+
+/* 상단 파란 바 */
+.bar-top { background:#0b66d5; }
+.bar-inner { max-width:1200px; margin:0 auto; height:56px; display:flex; align-items:center; gap:8px; color:#fff; font-weight:600; padding:0 20px; }
+.bar-inner .caret { opacity:.85; font-size:12px; }
+
+/* 메인 래퍼 */
+.doc-wrap { max-width:1200px; margin:48px auto 80px; padding:0 20px; }
+
+/* 타이틀 */
+.page-title { text-align:center; font-size:40px; letter-spacing:-.5px; margin:16px 0 14px; }
+
+/* 토글(시각적) */
+.type-toggle { display:flex; gap:22px; justify-content:center; margin:10px 0 26px; }
+.toggle { display:flex; align-items:center; gap:8px; color:#6f7b8a; font-weight:600; }
+.toggle .dot { width:18px; height:18px; border-radius:50%; display:inline-block; border:2px solid #cfd6e4; position:relative; }
+.toggle.on { color:#0b66d5; }
+.toggle.on .dot::after { content:""; position:absolute; top:50%; left:50%; width:8px; height:8px; background:#0b66d5; border-radius:50%; transform:translate(-50%,-50%); }
+
+/* 검색박스 */
+.search-box { display:flex; align-items:center; gap:10px; margin:14px auto 34px; max-width:980px; }
+.select-wrap { position:relative; min-width:260px; }
+.select-wrap select {
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  width:100%; height:48px; padding:0 40px 0 14px; border:1px solid #d7deea; border-radius:6px; background:#fff; font-size:15px;
+}
+.select-wrap .select-caret { position:absolute; right:12px; top:50%; transform:translateY(-50%); pointer-events:none; color:#7e8aa0; font-size:12px; }
+
+.search-box input {
+  flex:1; height:48px; padding:0 14px; border:1px solid #d7deea; border-radius:6px; font-size:15px;
+}
+
+.btn-search {
+  width:52px; height:48px; border:none; border-radius:6px; background:#0b66d5; color:#fff; font-size:20px; cursor:pointer;
+}
+
+/* 비어 있을 때 안내 */
+.empty-state { text-align:center; color:#6f7b8a; margin-top:80px; }
+.empty-state .icon { font-size:64px; margin-bottom:12px; }
+
+/* 결과 그리드 */
+.result-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+  gap:18px;
+}
+.card {
+  display:block; border:1px solid #e8edf6; border-radius:12px; overflow:hidden; text-decoration:none; background:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.08); }
+.thumb {
+  width: 100%;
+  aspect-ratio: 2 / 3; /* 기존 4/3보다 높이가 조금 더 큼 */
+  object-fit: cover;
+  background: #f3f6fb;
+}
+
+
+.meta { padding:12px 14px 14px; }
+.name { font-size:18px; font-weight:700; color:#222; margin-bottom:2px; }
+.dept { color:#0b66d5; font-weight:600; margin-bottom:4px; }
+.spec { color:#566176; font-size:14px; line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+
+
+

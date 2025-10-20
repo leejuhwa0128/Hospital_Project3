@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.AdminDAO">
+
+	<!-- ResultMap -->
+	<resultMap id="ReservationResultMap"
+		type="com.hospital.vo.ReservationVO">
+		<result property="reservationId" column="reservation_id" />
+		<result property="doctorId" column="doctor_id" />
+		<result property="scheduleTime" column="schedule_time" />
+		<result property="status" column="status" />
+		<result property="patientName" column="patient_name" />
+		<result property="patientPhone" column="patient_phone" />
+		<result property="doctorName" column="doctor_name" />
+		<result property="departmentName" column="department_name" />
+		<result property="patientNo" column="patient_no" />
+	</resultMap>
+
+
+
+	<!-- 관리자 로그인 -->
+	<select id="login" resultType="com.hospital.vo.AdminVO">
+		SELECT * FROM admins
+		WHERE admin_id
+		= #{adminId}
+		AND password = #{password}
+	</select>
+
+	<!-- 관리자 추가 -->
+	<insert id="insertAdmin" parameterType="com.hospital.vo.AdminVO">
+		INSERT INTO admins
+		(admin_id, password, name, email, phone, created_at)
+		VALUES
+		(#{adminId}, #{password}, #{name}, #{email}, #{phone}, SYSDATE)
+	</insert>
+
+	<!-- 진료 의뢰 전체 건수 -->
+	<select id="countTotalReferrals" resultType="int">
+		SELECT COUNT(*) FROM
+		referral_requests
+	</select>
+
+	<!-- 회신 완료된 진료 의뢰 건수 -->
+	<select id="countRepliedReferrals" resultType="int">
+		SELECT COUNT(*)
+		FROM referral_requests WHERE status = '회신완료'
+	</select>
+
+	<!-- 피드백 상태별 건수 -->
+	<select id="countFeedbackByStatus" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM feedbacks WHERE status = #{status}
+	</select>
+
+	<!-- 최근 피드백 5건 조회 -->
+	<select id="getRecentFeedbacksByStatus" parameterType="String"
+		resultType="com.hospital.vo.FeedbackVO">
+		<![CDATA[
+			SELECT * FROM (
+				SELECT * FROM feedbacks
+				WHERE status = #{status}
+				ORDER BY created_at DESC
+			)
+			WHERE ROWNUM <= 5
+		]]>
+	</select>
+
+	<!-- 최근 7일 예약 통계 -->
+	<select id="getReservationStatsLast7Days"
+		resultType="com.hospital.vo.ReservationVO">
+	<![CDATA[
+		SELECT
+			TO_CHAR(reservation_date, 'YYYY-MM-DD') AS resvDate,
+			COUNT(*) AS resvCount
+		FROM reservations
+		WHERE reservation_date >= TRUNC(SYSDATE) - 6
+		  AND reservation_date <= TRUNC(SYSDATE)
+		GROUP BY TO_CHAR(reservation_date, 'YYYY-MM-DD')
+		ORDER BY resvDate
+	]]>
+	</select>
+
+
+	<!-- 유저 역할 수정 -->
+	<update id="updateUserRole">
+		UPDATE users
+		SET role = #{role}
+		WHERE user_id =
+		#{userId}
+	</update>
+
+	<!-- 권한 수정 조회용 -->
+	<select id="getAllUsers" resultType="com.hospital.vo.UserVO">
+		SELECT user_id, name, role
+		FROM users
+		ORDER BY created_at DESC
+	</select>
+
+	<!-- 전체 날짜별 예약 건수 -->
+	<select id="getReservationSummaryByDateRange"
+		resultType="com.hospital.vo.ReservationVO">
+		SELECT TO_CHAR(reservation_date, 'YYYY-MM-DD') AS resvDate,
+		COUNT(*) AS resvCount
+		FROM reservations
+		GROUP BY
+		TO_CHAR(reservation_date, 'YYYY-MM-DD')
+		ORDER BY resvDate
+	</select>
+
+	<!-- 특정일 예약 현황 불러오기 (resultMap 적용) -->
+	<select id="getReservationsByDate" parameterType="string"
+		resultMap="ReservationResultMap">
+		SELECT
+		r.reservation_id,
+		r.doctor_id,
+		r.schedule_time,
+		r.status,
+		p.patient_name
+		AS patient_name,
+		p.patient_phone AS
+		patient_phone,
+		u.name AS
+		doctor_name,
+		d.name AS department_name,
+		r.patient_no
+		FROM reservations r
+		JOIN patients p ON r.patient_no =
+		p.patient_no
+		JOIN doctor_info di ON r.doctor_id = di.doctor_id
+		JOIN
+		users u ON u.user_id = di.doctor_id
+		LEFT JOIN departments d ON
+		d.dept_id = di.dept_id
+		WHERE TO_CHAR(r.reservation_date, 'YYYY-MM-DD')
+		= #{date}
+		ORDER BY r.schedule_time
+	</select>
+
+	<!-- USERS로 이관 (대기 상태만) -->
+	<insert id="insertUserFromPending" parameterType="string">
+		INSERT INTO
+		users (
+		user_id, password, name, rrn, gender, phone, email, role,
+		hospital_id, dept_id, created_at
+		)
+		SELECT user_id, password, name, rrn,
+		gender, phone, email, role,
+		hospital_id, dept_id, SYSDATE
+		FROM
+		pending_users
+		WHERE user_id = #{userId}
+		AND status = '대기'
+	</insert>
+
+	<!-- 승인 마킹: REVIEWED_BY = ADMINS.ADMIN_ID(sha512 해시) -->
+	<update id="markPendingApproved">
+		UPDATE pending_users
+		SET status = '승인',
+		reviewed_by =
+		#{adminId},
+		reviewed_at = SYSDATE,
+		reject_reason = NULL
+		WHERE user_id =
+		#{userId}
+	</update>
+
+	<!-- 반려 -->
+	<update id="rejectPendingUser">
+  	<![CDATA[
+  	UPDATE pending_users
+     SET status        = '반려',
+         reviewed_by   = #{adminId},
+         reviewed_at   = SYSDATE,
+         reject_reason = #{reason}
+  	 WHERE user_id = #{userId}
+     AND status = '대기'
+ 	 ]]>
+	</update>
+
+	<!-- 되돌리기(반려 → 대기) -->
+	<update id="undoPendingStatus" parameterType="string">
+		UPDATE
+		pending_users
+		SET status = '대기',
+		reviewed_by = NULL,
+		reviewed_at = NULL,
+		reject_reason= NULL
+		WHERE user_id = #{userId}
+		AND status = '반려'
+	</update>
+
+	<!-- 게시판 통계 조회 -->
+	<select id="getBoardPostStats"
+		resultType="com.hospital.vo.BoardStatVO">
+		SELECT category AS category,
+		COUNT(*) AS total,
+		SUM(CASE WHEN
+		TRUNC(created_at) = TRUNC(SYSDATE) THEN 1 ELSE 0 END) AS recent
+		FROM (
+		SELECT
+		CASE
+		WHEN category = '언론' THEN '언론보도'
+		WHEN category = '소식' THEN
+		'병원소식'
+		WHEN category = '채용' THEN '채용공고'
+		WHEN category IN ('강좌', '교육',
+		'행사') THEN '강좌/행사'
+		END AS category,
+		created_at
+		FROM events
+
+		UNION ALL
+
+		SELECT '칭찬 릴레이' AS category, created_at
+		FROM praise_relay
+		)
+		WHERE
+		category IS NOT NULL
+		GROUP BY category
+		ORDER BY category
+	</select>
+
+
+
+
+</mapper>

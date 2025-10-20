@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://mybatis.org/schema/mybatis-spring 
+		http://mybatis.org/schema/mybatis-spring-1.2.xsd">
+	<!-- properties 로딩 (추가) -->
+	<context:property-placeholder
+		location="classpath:captcha.properties" />
+
+	<!-- ✅ 컴포넌트 스캔 -->
+	<context:component-scan
+		base-package="com.hospital" use-default-filters="true">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- ✅ SmartEditor2 정적 리소스 매핑 (중요!) -->
+	<mvc:resources mapping="/smarteditor/**"
+		location="/smarteditor/, classpath:/static/smarteditor/" />
+	<mvc:annotation-driven />
+
+	<!-- ✅ MyBatis Mapper 스캔 -->
+	<mybatis-spring:scan
+		base-package="com.hospital.mapper, com.hospital.dao" />
+	<mybatis-spring:scan base-package="com.hospital"
+		annotation="org.apache.ibatis.annotations.Mapper" />
+
+	<!-- ✅ DataSource 설정 -->
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName"
+			value="oracle.jdbc.OracleDriver" />
+		<property name="url"
+			value="jdbc:oracle:thin:@192.168.18.15:1521:xe" />
+		<property name="username" value="project" />
+		<property name="password" value="123" />
+	</bean>
+	<!-- ✅ 메일 발송기 -->
+	<bean id="mailSender"
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="juhwa01012801@gmail.com" />          <!-- 바꿔주세요 -->
+		<property name="password" value="xebdgscfhcuwqmlf" /> <!-- 바꿔주세요 (앱 비밀번호) -->
+		<property name="javaMailProperties">
+			<props>
+      <prop key="mail.transport.protocol">smtp</prop>
+      <prop key="mail.smtp.auth">true</prop>
+      <prop key="mail.smtp.starttls.enable">true</prop>
+      <prop key="mail.smtp.starttls.required">true</prop>
+      <prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+      <!-- 문제 해결될 때까지만 true로; 해결 후 false 권장 -->
+      <prop key="mail.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- ✅ JdbcTemplate -->
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- ✅ ViewResolver -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- ✅ SqlSessionFactory -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations"
+			value="classpath:sqlmap/**/*Mapper.xml" />
+		<property name="configuration">
+			<bean class="org.apache.ibatis.session.Configuration">
+				<property name="jdbcTypeForNull" value="NULL" />
+				<property name="mapUnderscoreToCamelCase" value="true" />
+			</bean>
+		</property>
+		<property name="typeAliasesPackage" value="com.hospital" />
+	</bean>
+
+	<!-- ✅ SqlSessionTemplate -->
+	<bean class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+
+</beans>

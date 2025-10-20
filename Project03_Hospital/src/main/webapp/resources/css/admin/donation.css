@@ -1,0 +1,166 @@
+@charset "UTF-8";
+
+/* 전체 배경 & 폰트 */
+body {
+  font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+  background-color: #f0f4f8;
+  padding: 40px;
+  margin: 0;
+}
+
+/* 메인 컨테이너 */
+.donation-list {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* 제목 */
+h2 {
+  color: #0056b3;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* 요약 정보 */
+.summary {
+  background: #f8fbff;
+  padding: 12px 18px;
+  border: 1px solid #dbe6f2;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* 검색 폼 */
+.search-form {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-form input[type="text"],
+.search-form input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #ccd6e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.search-form button {
+  padding: 8px 14px;
+  background: #0077cc;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-form button:hover {
+  background: #005fa3;
+}
+
+/* 초기화 버튼 */
+.btn-reset {
+  padding: 8px 14px;
+  background: #e0e0e0;
+  color: #333;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.btn-reset:hover {
+  background: #c2c2c2;
+}
+
+/* 테이블 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #e6eaf0;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+th {
+  background: #f1f7ff;
+  color: #333;
+  font-weight: 600;
+}
+
+tbody tr:hover {
+  background-color: #f9fcff;
+}
+
+/* 페이징 */
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination a {
+  display: inline-block;
+  margin: 0 4px;
+  padding: 6px 12px;
+  border: 1px solid #ccd6e0;
+  border-radius: 5px;
+  background: #fff;
+  color: #0077cc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.pagination a:hover {
+  background: #0077cc;
+  color: #fff;
+}
+
+.pagination a.active {
+  background: #005fa3;
+  color: #fff;
+  border-color: #005fa3;
+  font-weight: 600;
+}
+
+/* 엑셀 다운로드 버튼 */
+.btn-export {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 18px;
+  background: #28a745;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.btn-export:hover {
+  background: #218838;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

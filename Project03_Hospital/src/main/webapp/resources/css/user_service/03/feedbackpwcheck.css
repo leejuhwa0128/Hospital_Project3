@@ -1,0 +1,110 @@
+@charset "UTF-8";
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f9fbfd;
+    padding: 40px;
+}
+
+.main-container {
+    display: flex;
+}
+
+/* ✅ 박스 스타일이 적용될 메인 컨텐츠 영역 */
+.content-area {
+    flex: 1;
+    background: #fff;
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-left: 30px;
+    margin-top: 40px;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+h2 .emoji {
+    margin-right: 10px;
+    font-size: 28px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.auth-form p {
+    font-size: 16px;
+    color: #555;
+    margin: 0;
+}
+
+.auth-form input[type="password"] {
+    width: 300px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #555;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.auth-form input[type="password"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* ✅ 버튼 영역 스타일 */
+.button-area {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.button-area button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0 5px;
+}
+
+.button-area button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+}
+
+.button-area button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.button-area button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.button-area button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+    color: #dc3545;
+    margin-top: 10px;
+    font-size: 14px;
+}

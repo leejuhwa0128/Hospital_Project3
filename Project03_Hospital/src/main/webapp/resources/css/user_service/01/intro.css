@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+/* 전체 레이아웃 */
+.page-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px;
+  background-color: #f9fbfd;
+}
+
+/* 왼쪽 메뉴 */
+.menu-box {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+/* 콘텐츠 내부 여백 제거 */
+.intro-content {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* 콘텐츠 제목 */
+.intro-content h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* 본문 텍스트 */
+.intro-content p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+  margin-top: 0;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .page-container {
+    flex-direction: column;
+  }
+
+  .menu-box {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .content-box {
+    padding: 30px;
+  }
+}

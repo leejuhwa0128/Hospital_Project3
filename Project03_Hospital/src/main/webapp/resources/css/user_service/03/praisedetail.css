@@ -1,0 +1,113 @@
+@charset "UTF-8";
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f9fbfd;
+            padding: 40px;
+        }
+
+        .main-container {
+            display: flex;
+        }
+
+        .content-area {
+            flex: 1;
+            background: #fff;
+            padding: 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-left: 30px;
+            margin-top: 40px;
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        h2 .emoji {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .praise-header {
+            margin-bottom: 20px;
+            border-bottom: 1px dashed #e9ecef;
+            padding-bottom: 20px;
+        }
+
+        .praise-header h3 {
+            font-size: 24px;
+            color: #333;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+
+        .praise-header .meta {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .praise-content {
+            margin-top: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #555;
+            white-space: pre-wrap; /* 줄바꿈 유지 */
+        }
+
+        .button-area {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .button-area a, .button-area button {
+            display: inline-block;
+            padding: 12px 30px;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0 5px;
+        }
+
+        .button-area .btn-list {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .button-area .btn-list:hover {
+            background-color: #5a6268;
+        }
+        
+        .button-area .btn-edit {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .button-area .btn-edit:hover {
+            background-color: #0056b3;
+        }
+        
+        .button-area .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .button-area .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .button-area form {
+            display: inline;
+        }

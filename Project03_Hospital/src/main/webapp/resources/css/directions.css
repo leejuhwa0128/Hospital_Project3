@@ -1,0 +1,188 @@
+@charset "UTF-8";
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f9fbfd;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #1e293b;
+}
+
+.direction-wrapper {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.direction-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 10px 40px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  color: #1e3a8a;
+}
+
+.address-text {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+}
+
+.direction-section h3 {
+  font-size: 18px;
+  color: #0f172a;
+  margin-bottom: 12px;
+  margin-top: 30px;
+}
+
+.transport-list {
+  padding-left: 0;
+  list-style: none;
+  margin: 0;
+}
+
+.transport-list li {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: white;
+  margin-right: 8px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.line2 { background-color: #22c55e; }
+.line-sinbundang { background-color: #b91c1c; }
+.line-blue { background-color: #2563eb; }
+.line-green { background-color: #10b981; }
+.line-red { background-color: #ef4444; }
+
+.map-container {
+  width: 100%;
+  height: 500px;
+  position: relative;
+  border-radius: 12px;
+  margin-top: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.category-wrap {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 9999;
+  display: flex;
+  gap: 8px;
+  background-color: rgba(255,255,255,0.8);
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  backdrop-filter: blur(5px);
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.category-item:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.category-item.active {
+  border-color: #007bff;
+  background-color: #e7f3ff;
+  font-weight: bold;
+  color: #0056b3;
+}
+
+.icon{display:inline-block;width:22px;height:26px;background-repeat:no-repeat}
+.icon.places{background-image:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png');background-position-x:-10px;}
+.icon.category{background-image:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/category.png');background-position-x:-10px;}
+.icon-pharmacy{background-position-y:-72px;}
+.icon-oil{background-position-y:-108px;}
+.icon-carpark{background-position-y:-72px;}
+.category-item.active .icon.places{background-position-x:-46px;}
+
+.placeinfo_wrap {position:absolute;bottom:28px;left:-150px;width:300px;}
+.placeinfo {
+    position:relative;
+    width:100%;
+    border-radius:8px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    background:#fff;
+    overflow: hidden;
+}
+.placeinfo .title {
+    display:block;
+    text-align:center;
+    padding: 10px 0;
+    border-bottom:1px solid #eee;
+    background:#f8f9fa;
+    font-size:15px;
+    font-weight: bold;
+}
+.placeinfo .title a {
+    color: #333;
+    text-decoration: none;
+}
+.placeinfo .body {
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.placeinfo .ellipsis {
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+}
+.placeinfo .jibun {
+    font-size:12px;
+    color:#888;
+    margin-top:2px;
+    display: block;
+}
+.placeinfo .tel {
+    display: block;
+    margin-top: 5px;
+    color: #007bff;
+    word-break: break-all;
+}
+.placeinfo:after{
+    content:'';
+    position:absolute;
+    margin-left:-12px;
+    left:50%;
+    bottom:-12px;
+    width:22px;
+    height:12px;
+    background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png') no-repeat;
+}
+
+@media (max-width: 768px) {
+  .direction-box { padding: 30px 20px; }
+  .address-text { font-size: 15px; }
+  .direction-section h3 { font-size: 16px; }
+  .transport-list li { font-size: 14px; }
+  .badge { font-size: 12px; padding: 3px 8px; }
+}

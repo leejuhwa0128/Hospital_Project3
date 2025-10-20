@@ -1,0 +1,22 @@
+@charset "EUC-KR";
+*{box-sizing:border-box} body{margin:0;font-family:'Noto Sans KR',sans-serif;color:#222;background:#fff}
+.dept-wrap{max-width:1200px;margin:56px auto 100px;padding:0 20px}
+.dept-title{text-align:center;font-size:40px;letter-spacing:-.5px;margin:10px 0 24px}
+
+.quick-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:8px 0 22px}
+.link-btn{display:inline-flex;align-items:center;justify-content:center;min-width:200px;height:44px;
+  padding:0 16px;border-radius:10px;text-decoration:none;font-weight:700;color:#fff;background:linear-gradient(180deg,#1984ff,#0b66d5)}
+.link-btn:hover{filter:brightness(1.05)}
+
+.dept-search{display:flex;gap:10px;max-width:700px;margin:0 auto 26px}
+.dept-search input{flex:1;height:48px;border:1px solid #d7deea;border-radius:6px;padding:0 14px;font-size:15px}
+.btn-search{width:56px;height:48px;border:none;border-radius:6px;background:#0b66d5;color:#fff;font-size:20px;cursor:pointer}
+
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:22px}
+.dept-card{position:relative;display:flex;align-items:center;justify-content:center;height:72px;padding:0 12px;
+  border:1px solid #e6ebf4;border-radius:10px;background:#fff;text-decoration:none;color:#233142;
+  box-shadow:0 2px 8px rgba(0,0,0,.03);transition:transform .12s ease, box-shadow .12s ease}
+.dept-card::after{content:"";position:absolute;right:0;top:0;width:56px;height:56px;background:
+  linear-gradient(135deg, rgba(240,243,250,.9) 0%, rgba(240,243,250,0) 60%);border-top-right-radius:10px}
+.dept-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.dept-name{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

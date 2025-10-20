@@ -1,0 +1,104 @@
+@charset "UTF-8";
+
+/* 전체 컨테이너 (레이아웃 설정용) */
+.main-container {
+  display: flex;
+  justify-content: flex-start;
+  padding: 20px 40px 40px 20px;
+  background-color: #f9fbfd;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 왼쪽 카테고리 박스 */
+.category-wrapper {
+  width: 220px;
+  position: relative;
+  background-color: transparent;
+}
+
+/* 메뉴 리스트 */
+.main-category {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.main-category li {
+  list-style: none;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.main-category li:last-child {
+  border-bottom: none;
+}
+
+/* a 태그 기본 상태 */
+.main-category li a {
+  text-decoration: none;
+  color: #1e3a8a;  /* 글자색을 파란색으로 설정 */
+  display: block;
+  border-radius: 6px;
+  padding: 6px 10px;
+  transition: background-color 0.2s, color 0.2s;
+  outline: none; /* ✅ 클릭 시 생기는 진한 파랑 테두리 제거 */
+}
+
+/* hover & active: 둘 다 같은 배경/글자색 유지 */
+.main-category li a:hover,
+.main-category li a.active {
+  background-color: #dbeafe;  /* 연한 파랑 */
+  color: #1e3a8a;             /* 글자색 파란색 */
+  box-shadow: none;           /* ✅ 외곽선 제거 */
+}
+
+/* ✅ 불필요한 li:hover 등 제거 */
+.main-category li:hover {
+  background-color: transparent;
+}
+
+/* "지역 사회 협력 프로그램" 텍스트가 한 줄로 나오도록 하기 */
+.main-category li a {
+  white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
+  overflow: hidden;
+  text-overflow: ellipsis; /* 텍스트가 길어지면 ...으로 표시 */
+}
+
+/* 검색 영역 */
+.search-area {
+  margin-top: 20px;
+}
+
+.search-area form {
+  display: flex;
+  gap: 6px;
+}
+
+.search-area input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.search-area button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.search-area button img {
+  width: 18px;
+  height: 18px;
+}

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.dao.Doctor2DAO">
+
+	<!-- DoctorMapper.xml -->
+	  <resultMap id="reservationResultMap" type="com.hospital.vo.ReservationVO">
+    <id     property="reservationId"   column="reservation_id"/>
+    <result property="patientNo"       column="patient_no"/>
+    <result property="department"      column="department"/>
+    <result property="doctorId"        column="doctor_id"/>
+    <result property="reservationDate" column="reservation_date"/>
+    <result property="status"          column="status"/>
+    <result property="createdAt"       column="created_at"/>
+    <result property="scheduleId"      column="schedule_id"/>
+    <result property="scheduleTime"    column="schedule_time"/>
+    <result property="patientName"     column="patient_name"/>
+    <result property="doctorName"      column="doctorName"/>
+    <result property="departmentName"  column="departmentName"/>
+  </resultMap>
+	
+	
+	
+	
+	<select id="getAllDepartments" resultType="DepartmentVO">
+		SELECT * FROM
+		departments ORDER BY name
+	</select>
+
+	<select id="getDoctorsByDeptId" parameterType="String"
+		resultType="DoctorVO">
+		SELECT * FROM doctor_info WHERE dept_id = #{deptId}
+	</select>
+
+	<select id="getSchedulesByDoctorAndDate" parameterType="map"
+		resultType="DoctorScheduleVO">
+		SELECT * FROM doctor_schedules
+		WHERE doctor_id = #{doctorId}
+		AND TO_CHAR(schedule_date, 'YYYY-MM-DD') =
+		#{date}
+	</select>
+
+	 <select id="selectTodayPatientsByDoctorId"
+        parameterType="string"
+        resultMap="reservationResultMap">
+  <![CDATA[
+    SELECT
+      r.reservation_id,
+      r.patient_no,
+      r.department,
+      r.doctor_id,
+      r.reservation_date,
+      r.status,
+      r.created_at,
+      r.schedule_id,
+      r.schedule_time,
+      p.patient_name AS patient_name,
+      u.name         AS doctorName,
+      d.name         AS departmentName
+    FROM reservations r
+      LEFT JOIN patients    p ON p.patient_no = r.patient_no
+      LEFT JOIN users       u ON u.user_id    = r.doctor_id
+      LEFT JOIN departments d ON d.dept_id    = r.department
+    WHERE TRIM(UPPER(r.doctor_id)) = TRIM(UPPER(#{doctorId}))
+      AND r.reservation_date >= TRUNC(SYSDATE)
+      AND r.reservation_date <  TRUNC(SYSDATE) + 1
+      AND r.status <> '취소'
+    ORDER BY r.reservation_date, r.reservation_id
+  ]]>
+</select>
+<select id="selectReservationById"
+        parameterType="int"
+        resultMap="reservationResultMap">
+  <![CDATA[
+    SELECT
+      r.reservation_id,
+      r.patient_no,
+      r.department,
+      r.doctor_id,
+      r.reservation_date,
+      r.status,
+      r.created_at,
+      r.schedule_id,
+      r.schedule_time,
+      p.patient_name AS patient_name,
+      u.name         AS doctorName,
+      d.name         AS departmentName
+    FROM reservations r
+      JOIN patients    p ON p.patient_no = r.patient_no
+      JOIN users       u ON u.user_id    = r.doctor_id
+      JOIN departments d ON d.dept_id    = r.department
+    WHERE r.reservation_id = #{reservationId}
+  ]]>
+</select>
+<update id="updateStatusToCompleted" parameterType="int">
+  <![CDATA[
+    UPDATE reservations
+    SET status = '완료'
+    WHERE reservation_id = #{reservationId}
+  ]]>
+</update>
+
+
+
+</mapper>

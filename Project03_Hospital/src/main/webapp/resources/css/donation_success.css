@@ -1,0 +1,40 @@
+@charset "UTF-8";
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f8ff;
+    text-align: center;
+    padding: 50px;
+}
+.box {
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+h2 {
+    color: #0077cc;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    text-align: left;
+    background: #f9f9f9;
+}
+.btn {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    background: #0077cc;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+}

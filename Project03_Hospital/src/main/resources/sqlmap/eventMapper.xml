@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="eventMapper">
+
+	<!-- ================== [기본 조회] ================== -->
+
+	<!-- 카테고리별 전체 조회 -->
+	<select id="selectEventsByCategoryInfo" parameterType="string"
+		resultType="com.hospital.vo.EventVO">
+		SELECT * FROM events
+		WHERE category = #{category}
+		ORDER BY
+		created_at DESC
+	</select>
+
+	<!-- 단건 조회 -->
+	<select id="selectEventByIdInfo"
+		resultType="com.hospital.vo.EventVO">
+		SELECT * FROM events
+		WHERE event_id = #{eventId}
+	</select>
+
+	<!-- 다중 카테고리 + 상태 필터링 -->
+	<select id="selectFilteredEvents" parameterType="map"
+		resultType="com.hospital.vo.EventVO">
+		SELECT * FROM (
+		SELECT e.*, ROWNUM rn FROM (
+		SELECT * FROM events
+		WHERE
+		category IN
+		<foreach collection="categories" item="cat" open="("
+			separator="," close=")">
+			#{cat}
+		</foreach>
+		AND status = '게시'
+		ORDER BY created_at DESC
+		) e
+		WHERE ROWNUM &lt;=
+		#{offset} + #{limit}
+		)
+		WHERE rn &gt; #{offset}
+	</select>
+
+	<!-- 공지/소식/채용/언론 전체 -->
+	<select id="selectGeneralInfoEventsInfo"
+		resultType="com.hospital.vo.EventVO">
+		SELECT * FROM events
+		WHERE category IN ('공지', '소식', '채용',
+		'언론')
+		ORDER BY created_at DESC
+	</select>
+
+	<!-- ================== [등록 / 수정 / 삭제] ================== -->
+
+	<!-- 등록 -->
+	<insert id="insertEventInfo"
+		parameterType="com.hospital.vo.EventVO">
+		<selectKey keyProperty="eventId" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_EVENT_ID.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO events (
+		event_id, title, description, created_by,
+		created_at,
+		category, job_position, working_type, work_location,
+		recruit_count, contact, contact_email,
+		start_date, end_date,
+		sub_category,
+		resume_file_path, resume_form,
+		thumbnail_path, file_path,
+		original_file_name,
+		reporter, source  <!-- ✅ 추가 -->
+		) VALUES (
+		#{eventId}, #{title}, #{description},
+		#{createdBy}, SYSDATE,
+		#{category}, #{jobPosition}, #{workingType}, #{workLocation},
+		#{recruitCount}, #{contact}, #{contactEmail},
+		#{startDate}, #{endDate},
+		#{subCategory},
+		#{resumeFilePath}, #{resumeForm},
+		#{thumbnailPath},
+		#{filePath}, #{originalFileName},
+		#{reporter}, #{source} <!-- ✅ 추가 -->
+		)
+	</insert>
+
+	<!-- 수정 -->
+	<update id="updateEventInfo"
+		parameterType="com.hospital.vo.EventVO">
+		UPDATE events SET
+		title = #{title},
+		category = #{category},
+		description = #{description},
+		work_location = #{workLocation},
+		speaker = #{speaker},
+		start_date = #{startDate},
+		end_date = #{endDate},
+		time_info = #{timeInfo},
+		contact = #{contact},
+		thumbnail_path = #{thumbnailPath},
+		resume_file_path = #{resumeFilePath},
+		updated_at = SYSDATE,
+		reporter = #{reporter},   <!-- ✅ 추가 -->
+		source = #{source}        <!-- ✅ 추가 -->
+		WHERE event_id = #{eventId}
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteEventInfo" parameterType="int">
+		DELETE FROM events
+		WHERE event_id = #{eventId}
+	</delete>
+
+	<!-- ================== [페이징 조회] ================== -->
+
+	<!-- 카테고리 페이징 조회 -->
+	<select id="countEventsByCategory" parameterType="string"
+		resultType="int">
+		SELECT COUNT(*) FROM events WHERE category = #{category}
+	</select>
+
+	<select id="selectEventsByCategoryWithPaging"
+		parameterType="map" resultType="com.hospital.vo.EventVO">
+		SELECT * FROM (
+		SELECT ROWNUM rn, A.*
+		FROM (
+		SELECT
+		event_id AS eventId,
+		title, description, created_by AS
+		createdBy,
+		created_at AS createdAt, updated_at AS updatedAt,
+		category,
+		reporter, source, thumbnail_path AS thumbnailPath,
+		work_location AS
+		workLocation, speaker, start_date AS startDate,
+		end_date AS endDate,
+		time_info AS timeInfo,
+		contact, status, sub_category AS subCategory,
+		view_count AS viewCount
+		FROM events
+		WHERE category = #{category}
+		ORDER BY
+		created_at DESC, event_id DESC
+		) A
+		WHERE ROWNUM &lt;= (#{offset} +
+		#{pageSize})
+		)
+		WHERE rn &gt; #{offset}
+	</select>
+
+	<!-- ================== [채용 전용] ================== -->
+
+	<select id="countRecruit" parameterType="map" resultType="int">
+		SELECT COUNT(*) FROM events
+		WHERE category = '채용'
+		<if test="subCategory != null and subCategory != ''">
+			AND sub_category = #{subCategory}
+		</if>
+	</select>
+
+	<select id="selectRecruitPage" parameterType="map"
+		resultType="com.hospital.vo.EventVO">
+		SELECT * FROM (
+		SELECT e.*, ROWNUM rn FROM (
+		SELECT
+		event_id AS eventId,
+		title, sub_category AS subCategory,
+		start_date AS startDate,
+		end_date AS
+		endDate,
+		created_at AS createdAt
+		FROM events
+		WHERE category = '채용'
+		<if test="subCategory != null and subCategory != ''">
+			AND sub_category = #{subCategory}
+		</if>
+		ORDER BY created_at DESC
+		) e
+		WHERE ROWNUM &lt;= (#{offset} +
+		#{pageSize})
+		)
+		WHERE rn &gt; #{offset}
+	</select>
+
+	<!-- ================== [소식 전용] ================== -->
+
+	<select id="selectNewsWithPaging" parameterType="map"
+		resultType="com.hospital.vo.EventVO">
+		SELECT event_id AS eventId, title, description, created_at
+		AS createdAt,
+		thumbnail_path AS thumbnailPath, image_path AS imagePath,
+		view_count
+		AS viewCount
+		FROM events
+		WHERE category = '소식'
+		ORDER BY
+		created_at DESC
+		OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+
+	<select id="countNews" resultType="int">
+		SELECT COUNT(*) FROM events
+		WHERE category = '소식'
+	</select>
+
+	<update id="increaseNewsView" parameterType="int">
+		UPDATE events
+		SET
+		view_count = NVL(view_count,0) + 1
+		WHERE event_id = #{value}
+	</update>
+
+	<select id="selectNewsById" parameterType="int"
+		resultType="com.hospital.vo.EventVO">
+		SELECT event_id AS eventId, title, description,
+		created_at
+		AS createdAt, view_count AS viewCount
+		FROM events
+		WHERE event_id =
+		#{eventId} AND category = '소식'
+	</select>
+
+	<!-- ================== [강좌/행사 전용] ================== -->
+
+	<insert id="insertLectureEvent"
+		parameterType="com.hospital.vo.EventVO">
+		INSERT INTO EVENTS (
+		EVENT_ID, TITLE, CATEGORY,
+		START_DATE, END_DATE,
+		WORK_LOCATION, SPEAKER, TIME_INFO, CONTACT,
+		CONTACT_EMAIL, DESCRIPTION, CREATED_BY, CREATED_AT, STATUS
+		) VALUES (
+		EVENTS_SEQ.NEXTVAL, #{title}, #{category}, #{startDate}, #{endDate},
+		#{workLocation}, #{speaker}, #{timeInfo}, #{contact},
+		#{contactEmail},
+		#{description}, #{createdBy}, SYSDATE, #{status}
+		)
+	</insert>
+
+	<update id="updateViewCount" parameterType="int">
+		UPDATE events
+		SET
+		view_count = NVL(view_count,0) + 1
+		WHERE event_id = #{eventId}
+	</update>
+
+	<!-- ================== [카테고리+서브카테고리 전용] ================== -->
+
+	<select id="countEventsByCategoryAndSub" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*) FROM events
+		WHERE category = #{category}
+		<if test="subCategory != null and subCategory != ''">
+			AND sub_category = #{subCategory}
+		</if>
+	</select>
+
+	<select id="selectEventsByCategoryAndSubWithPaging"
+		parameterType="map" resultType="com.hospital.vo.EventVO">
+		SELECT * FROM (
+		SELECT e.*, ROWNUM rn FROM (
+		SELECT * FROM events
+		WHERE
+		category = #{category}
+		<if test="subCategory != null and subCategory != ''">
+			AND sub_category = #{subCategory}
+		</if>
+		ORDER BY created_at DESC
+		) e
+		WHERE ROWNUM &lt;= (#{offset} + #{limit})
+		)
+		WHERE rn &gt; #{offset}
+	</select>
+
+	<!-- ================== [카테고리+직무 필터링 전용] ================== -->
+
+	<select id="selectEventsByCategoryAndJobWithPaging"
+		parameterType="map" resultType="com.hospital.vo.EventVO">
+		SELECT * FROM (
+		SELECT e.*, ROWNUM rn FROM (
+		SELECT * FROM events
+		WHERE
+		category = #{category}
+		<if test="job != null and job != ''">
+			AND job_position = #{job}
+		</if>
+		ORDER BY created_at DESC
+		) e
+		WHERE ROWNUM &lt;= (#{offset} + #{size})
+		)
+		WHERE rn &gt; #{offset}
+	</select>
+<!-- 공지사항 카테고리 전체 조회 -->
+	<select id="getEventsByCategory" parameterType="String"
+		resultType="com.hospital.vo.EventVO">
+		SELECT * FROM EVENTS
+		WHERE CATEGORY = #{category}
+		ORDER BY
+		CREATED_AT DESC
+	</select>
+	
+	
+	
+	  <select id="searchEventsByKeyword" resultType="com.hospital.vo.EventVO" parameterType="String">
+        SELECT
+            event_id as eventId,
+            title,
+            description,
+            category
+        FROM
+            events
+        WHERE
+            (title LIKE '%' || #{keyword} || '%' OR description LIKE '%' || #{keyword} || '%')
+            AND category IN ('강좌', '교육', '행사', '기타')
+        ORDER BY
+            event_id DESC
+    </select>
+
+
+
+</mapper>
+

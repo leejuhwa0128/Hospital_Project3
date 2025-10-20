@@ -1,0 +1,62 @@
+@charset "UTF-8";
+
+/* ===== Base ===== */
+:root{
+  --bg:#f9fbfd; --ink:#111; --muted:#667085; --brand:#1e3a8a;
+  --line:#e6ebf1; --card:#fff; --shadow:0 10px 30px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)}
+a{color:inherit;text-decoration:none}
+
+/* ===== Layout ===== */
+.main-container{display:flex;max-width:1800px;margin:0 auto}
+.sidebar{width:220px}
+.content-area{flex:1;padding:0 40px}
+
+/* ===== Outer Page Card (병원 소식 전체 래퍼) ===== */
+.section-card{
+  max-width:1400px;  /* ★ 전체 카드 폭 */
+  width:100%;
+  margin:36px auto 48px;
+  padding:36px 64px; /* ★ 더 널널하게 */
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+.page-title{margin:0 0 18px;font-size:30px;font-weight:800;color:var(--brand)}
+
+/* ===== 카드 그리드 (썸네일 없음) ===== */
+.card-grid{
+  display:grid;gap:28px;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); /* ★ 카드 더 큼 */
+}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  box-shadow:0 3px 10px rgba(0,0,0,.04);
+  transition:transform .16s ease, box-shadow .16s ease;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 12px 22px rgba(0,0,0,.08)}
+.info{padding:18px 20px}
+.title{margin:0 0 8px;font-size:18px;font-weight:700;line-height:1.45}
+.meta{font-size:13px;color:var(--muted);margin-bottom:10px}
+.desc{font-size:14.5px;color:#2b2f36;line-height:1.75}
+
+/* ===== Pagination (가운데 + 아이콘) ===== */
+.page-nav{margin-top:28px}
+.pager{
+  list-style:none;display:flex;justify-content:center;align-items:center;gap:8px;padding:0;margin:0;
+}
+.pager li a,.pager li span{
+  display:inline-block;min-width:36px;padding:9px 12px;border:1px solid var(--line);
+  border-radius:10px;background:#fff;font-size:14px;text-align:center;
+}
+.pager li a:hover{background:#0b63ff;color:#fff;border-color:#0b63ff}
+.pager .active span{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:700}
+.pager .disabled span{opacity:.4;cursor:not-allowed;background:#fff}
+@media (max-width:980px){
+  .content-area{padding:0 20px}
+  .section-card{padding:28px 24px}
+  .page-title{font-size:24px}
+}

@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.ReservationDAO">
+
+  <!-- 특정 환자의 예약 목록 조회 -->
+  <select id="getReservationsByPatientNo" resultType="com.hospital.vo.ReservationVO">
+    SELECT
+      r.reservation_id,
+      r.patient_no,
+      r.doctor_id,
+      r.department,
+      r.reservation_date,
+      r.status,
+      r.schedule_time,
+      r.created_at,
+      r.schedule_id,
+      u.name AS doctor_name,
+      d.name AS department_name
+    FROM reservations r
+      JOIN doctor_info di ON r.doctor_id = di.doctor_id
+      JOIN users u ON u.user_id = di.doctor_id
+      LEFT JOIN departments d ON d.dept_id = di.dept_id
+    WHERE r.patient_no = #{patientNo}
+    ORDER BY r.reservation_date DESC, r.schedule_time
+  </select>
+
+  <!-- 예약 (VO로 저장) -->
+  <insert id="insertReservation" parameterType="com.hospital.vo.ReservationVO">
+    INSERT INTO reservations (
+      reservation_id, patient_no,
+      department, doctor_id,
+      reservation_date, schedule_time, schedule_id,
+      status, created_at
+    ) VALUES (
+      seq_reservation_id.NEXTVAL,
+      #{patientNo},
+      #{department}, #{doctorId},
+      #{reservationDate}, #{scheduleTime},
+      #{scheduleId}, #{status}, SYSDATE
+    )
+  </insert>
+
+  <update id="updateReservationStatus">
+    UPDATE reservations
+       SET status = #{status}
+     WHERE reservation_id = #{reservationId}
+  </update>
+
+  <select id="countTodayReservations" resultType="int">
+    SELECT COUNT(*)
+      FROM reservations
+     WHERE TO_CHAR(reservation_date, 'YYYY-MM-DD') = TO_CHAR(SYSDATE,'YYYY-MM-DD')
+  </select>
+
+  <!-- 부서 목록 -->
+  <select id="selectDepartments" resultType="com.hospital.vo.DepartmentVO">
+    SELECT DEPT_ID AS deptId, NAME, DESCRIPTION, HEAD_DOCTOR_ID AS headDoctorId,
+           PHONE, CREATED_AT
+      FROM DEPARTMENTS
+     ORDER BY NAME
+  </select>
+
+  <!-- 부서별 의사 -->
+  <select id="selectDoctorsByDept" parameterType="string" resultType="com.hospital.vo.DoctorVO">
+    SELECT
+      d.DOCTOR_ID           AS doctorId,
+      d.DEPT_ID             AS deptId,
+      d.SPECIALTY           AS specialty,
+      d.BIO                 AS bio,
+      d.PROFILE_IMAGE_PATH  AS profileImagePath,
+      d.CREATED_AT          AS createdAt,
+      u.NAME                AS name,
+      dp.NAME               AS departmentName
+    FROM DOCTOR_INFO d
+      JOIN USERS u ON u.USER_ID = d.DOCTOR_ID
+      JOIN DEPARTMENTS dp ON dp.DEPT_ID = d.DEPT_ID
+    WHERE
+      (
+        UPPER(TRIM(d.DEPT_ID)) = UPPER(TRIM(#{deptId}))
+        OR UPPER(TRIM(dp.NAME)) = UPPER(TRIM(#{deptId}))
+      )
+    ORDER BY u.NAME
+  </select>
+
+ <!-- 의사별 스케줄(오늘 이후) -->
+<select id="selectSchedulesByDoctorFromToday" parameterType="string"
+        resultType="com.hospital.vo.DoctorScheduleVO">
+  SELECT SCHEDULE_ID   AS scheduleId,
+         DOCTOR_ID     AS doctorId,
+         SCHEDULE_DATE AS scheduleDate,
+         TIME_SLOT     AS timeSlot,
+         SCHEDULE_TIME AS scheduleTime,
+         NOTE          AS note,
+         CREATED_AT    AS createdAt
+  FROM DOCTOR_SCHEDULES
+  WHERE UPPER(TRIM(DOCTOR_ID)) = UPPER(TRIM(#{doctorId}))
+    AND (
+          SCHEDULE_DATE > TRUNC(SYSDATE)
+       OR (SCHEDULE_DATE = TRUNC(SYSDATE)
+           AND SCHEDULE_TIME >= TO_CHAR(SYSDATE,'HH24:MI'))
+        )
+  ORDER BY SCHEDULE_DATE, SCHEDULE_TIME
+</select>
+
+  <!-- 의사별 예약된 schedule_id(취소 제외) -->
+  <select id="selectReservedScheduleIdsByDoctor" parameterType="string" resultType="long">
+  SELECT DISTINCT r.SCHEDULE_ID
+  FROM RESERVATIONS r
+  WHERE UPPER(TRIM(r.DOCTOR_ID)) = UPPER(TRIM(#{doctorId}))
+    AND r.STATUS IN ('대기','확정','완료')  <!-- ✅ '취소' 제외 -->
+</select>
+
+  <!-- 스케줄 점유 카운트 (해당 일정에 유효 예약 존재 여부) -->
+  <select id="countActiveReservationByScheduleId" parameterType="int" resultType="int">
+  SELECT COUNT(*)
+  FROM RESERVATIONS
+  WHERE SCHEDULE_ID = #{value}
+    AND STATUS IN ('대기','확정','완료')  <!-- ✅ '취소' 빼기 -->
+</select>
+
+  <!-- 부서명 조회 -->
+  <select id="selectDepartmentNameById" parameterType="string" resultType="string">
+    SELECT NAME FROM DEPARTMENTS WHERE DEPT_ID = #{deptId}
+  </select>
+
+  <select id="findDepartmentNameById" parameterType="string" resultType="string">
+    SELECT NAME FROM DEPARTMENTS WHERE DEPT_ID = #{deptId}
+  </select>
+
+  <!-- 내 예약 목록 (과거 제외) -->
+  <select id="selectMyReservations" parameterType="map" resultType="map">
+    SELECT r.RESERVATION_ID   AS reservationId,
+           r.DEPARTMENT       AS department,
+           r.DOCTOR_ID        AS doctorId,
+           u.NAME             AS doctorName,
+           r.RESERVATION_DATE AS reservationDate,
+           r.SCHEDULE_TIME    AS scheduleTime,
+           r.STATUS           AS status
+      FROM RESERVATIONS r
+      LEFT JOIN USERS u ON u.USER_ID = r.DOCTOR_ID
+     WHERE r.PATIENT_NO = #{patientNo}
+       AND (
+             r.RESERVATION_DATE > TRUNC(SYSDATE)
+          OR (r.RESERVATION_DATE = TRUNC(SYSDATE)
+              AND r.SCHEDULE_TIME >= TO_CHAR(SYSDATE,'HH24:MI'))
+           )
+       <if test="status != null and status != ''">
+         AND r.STATUS = #{status}
+       </if>
+     ORDER BY r.RESERVATION_DATE ASC, r.SCHEDULE_TIME ASC
+  </select>
+
+  <!-- 단건 (본인) -->
+  <select id="selectOneForOwner" parameterType="map" resultType="com.hospital.vo.ReservationVO">
+    SELECT r.RESERVATION_ID   AS reservationId,
+           r.PATIENT_NO       AS patientNo,
+           r.DEPARTMENT       AS department,
+           r.DOCTOR_ID        AS doctorId,
+           u.NAME             AS doctorName,
+           r.RESERVATION_DATE AS reservationDate,
+           r.SCHEDULE_TIME    AS scheduleTime,
+           r.SCHEDULE_ID      AS scheduleId,
+           r.STATUS           AS status
+      FROM RESERVATIONS r
+      LEFT JOIN USERS u ON u.USER_ID = r.DOCTOR_ID
+     WHERE r.RESERVATION_ID = #{reservationId}
+       AND r.PATIENT_NO     = #{patientNo}
+  </select>
+
+  <!-- 내 예약 수정 -->
+  <update id="updateMyReservation" parameterType="map">
+    UPDATE RESERVATIONS
+       SET DEPARTMENT       = #{department},
+           DOCTOR_ID        = #{doctorId},
+           RESERVATION_DATE = TO_DATE(#{reservationDate}, 'YYYY-MM-DD'),
+           SCHEDULE_TIME    = #{scheduleTime},
+           <if test="scheduleId != null">SCHEDULE_ID = #{scheduleId},</if>
+           STATUS           = #{status}
+     WHERE RESERVATION_ID   = #{reservationId}
+       AND PATIENT_NO       = #{patientNo}
+  </update>
+
+  <!-- 내 예약 취소(상태 변경) -->
+  <update id="cancelMyReservation" parameterType="map">
+  UPDATE RESERVATIONS
+     SET STATUS = '취소'
+   WHERE RESERVATION_ID = #{reservationId}
+     AND PATIENT_NO     = #{patientNo}
+     AND STATUS IN ('대기','확정')
+</update>
+
+
+  <!-- 내 예약 삭제(완료는 금지) -->
+  <delete id="deleteMyReservation" parameterType="map">
+    DELETE FROM RESERVATIONS
+     WHERE RESERVATION_ID = #{reservationId}
+       AND PATIENT_NO     = #{patientNo}
+       AND STATUS != '완료'
+  </delete>
+
+  <!-- 자동완성/검색 -->
+  <select id="searchDepartmentsByName" parameterType="string" resultType="map">
+    SELECT d.DEPT_ID AS deptId, d.NAME AS name
+      FROM DEPARTMENTS d
+     WHERE (#{q} IS NULL OR d.NAME LIKE '%' || #{q} || '%')
+     ORDER BY d.NAME
+  </select>
+
+  <select id="searchDoctorsByDeptAndName" parameterType="map" resultType="map">
+    SELECT di.DOCTOR_ID AS doctorId, u.NAME AS doctorName
+      FROM DOCTOR_INFO di
+      JOIN USERS u ON u.USER_ID = di.DOCTOR_ID
+     WHERE di.DEPT_ID = #{deptId}
+       AND (#{q} IS NULL OR u.NAME LIKE '%' || #{q} || '%')
+     ORDER BY u.NAME
+  </select>
+
+  <!-- 의사 단건 이름 조회 (Suggest) -->
+  <select id="selectDoctorNameByIdForSuggest" parameterType="string" resultType="map">
+    SELECT u.USER_ID AS doctorId, u.NAME AS name
+      FROM USERS u
+     WHERE u.USER_ID = #{doctorId}
+  </select>
+
+  <!-- 날짜/시간별 스케줄 조회 -->
+<select id="selectScheduleDatesByDoctor" parameterType="string" resultType="string">
+  SELECT TO_CHAR(SCHEDULE_DATE, 'YYYY-MM-DD') AS d
+  FROM DOCTOR_SCHEDULES s
+  WHERE s.DOCTOR_ID = #{value}
+    AND (
+          s.SCHEDULE_DATE > TRUNC(SYSDATE)
+       OR (s.SCHEDULE_DATE = TRUNC(SYSDATE)
+           AND s.SCHEDULE_TIME >= TO_CHAR(SYSDATE,'HH24:MI'))
+        )
+  GROUP BY s.SCHEDULE_DATE
+  ORDER BY s.SCHEDULE_DATE
+</select>
+
+ <select id="selectScheduleTimesByDoctorAndDate" parameterType="map" resultType="map">
+  SELECT TIME_SLOT AS timeSlot, SCHEDULE_TIME AS time
+  FROM DOCTOR_SCHEDULES s
+  WHERE UPPER(TRIM(s.DOCTOR_ID)) = UPPER(TRIM(#{doctorId}))
+    AND s.SCHEDULE_DATE = TO_DATE(#{date}, 'YYYY-MM-DD')
+    AND NOT EXISTS (
+      SELECT 1
+      FROM RESERVATIONS r
+      WHERE r.SCHEDULE_ID = s.SCHEDULE_ID
+        AND r.STATUS IN ('대기','확정','완료')   <!-- ✅ '취소'는 허용 -->
+    )
+  ORDER BY s.SCHEDULE_TIME
+</select>
+
+  <select id="findScheduleIdByDoctorDateTime" parameterType="map" resultType="long">
+  SELECT s.SCHEDULE_ID
+    FROM DOCTOR_SCHEDULES s
+   WHERE s.DOCTOR_ID = #{doctorId}
+     AND s.SCHEDULE_DATE = TO_DATE(#{date}, 'YYYY-MM-DD')
+     AND s.SCHEDULE_TIME = #{time}
+</select>
+
+  <!-- 내 예약 (과거 제외) -->
+  <select id="selectByPatient" parameterType="map" resultType="com.hospital.vo.ReservationVO">
+    SELECT
+      r.reservation_id   AS reservationId,
+      r.patient_no       AS patientNo,
+      r.department       AS department,
+      r.doctor_id        AS doctorId,
+      uu.name            AS doctorName,
+      r.reservation_date AS reservationDate,
+      r.schedule_time    AS scheduleTime,
+      r.schedule_id      AS scheduleId,
+      r.status           AS status,
+      r.created_at       AS createdAt
+    FROM reservations r
+    LEFT JOIN users uu ON uu.user_id = r.doctor_id
+    WHERE r.patient_no = #{patientNo}
+      <if test="status != null and status != '' and status != '전체' and status != 'ALL' and status != 'all'">
+  AND r.status = #{status}
+</if>
+        
+      AND (
+            r.reservation_date > TRUNC(SYSDATE)
+         OR (r.reservation_date = TRUNC(SYSDATE)
+             AND r.schedule_time >= TO_CHAR(SYSDATE,'HH24:MI'))
+          )
+    ORDER BY r.reservation_date DESC, r.schedule_time DESC
+  </select>
+
+  <!-- 부서별 의사 목록 (표준화 응답용) -->
+  <select id="getDoctorsListByDept" parameterType="string" resultType="map">
+    WITH d AS (
+      SELECT
+        doctor_id,
+        dept_id,
+        ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY doctor_id) AS rn
+      FROM doctor_info
+      WHERE dept_id = #{deptId}
+    ),
+    u AS (
+      SELECT
+        name,
+        dept_id,
+        ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY name) AS rn
+      FROM users
+      WHERE dept_id = #{deptId}
+    )
+    SELECT
+      d.doctor_id AS doctorId,
+      u.name      AS name
+    FROM d
+    LEFT JOIN u
+      ON d.dept_id = u.dept_id
+     AND d.rn      = u.rn
+    ORDER BY NVL(u.name, TO_CHAR(d.doctor_id))
+  </select>
+
+  <!-- 가능 시간 (오타/테이블명 수정) -->
+  <select id="getAvailableTimesByDoctorAndDate" parameterType="map" resultType="string">
+  SELECT s.SCHEDULE_TIME
+  FROM DOCTOR_SCHEDULES s
+  WHERE s.DOCTOR_ID = #{doctorId}
+    AND s.SCHEDULE_DATE = TO_DATE(#{date}, 'YYYY-MM-DD')
+    AND (
+          TO_DATE(#{date}, 'YYYY-MM-DD') > TRUNC(SYSDATE)
+       OR (TO_DATE(#{date}, 'YYYY-MM-DD') = TRUNC(SYSDATE)
+           AND s.SCHEDULE_TIME >= TO_CHAR(SYSDATE,'HH24:MI'))
+        )
+    AND NOT EXISTS (
+      SELECT 1 FROM RESERVATIONS r
+       WHERE r.SCHEDULE_ID = s.SCHEDULE_ID
+         AND r.STATUS != '취소'
+    )
+  ORDER BY s.SCHEDULE_TIME
+</select>
+
+  <!-- 예약 변경(공통) -->
+  <update id="updateReservationById" parameterType="map">
+    UPDATE RESERVATIONS
+       SET DEPARTMENT       = #{department},
+           DOCTOR_ID        = #{doctorId},
+           RESERVATION_DATE = TO_DATE(#{reservationDate}, 'YYYY-MM-DD'),
+           SCHEDULE_TIME    = #{scheduleTime},
+           SCHEDULE_ID      = #{scheduleId},
+           STATUS           = #{status}
+     WHERE RESERVATION_ID   = #{reservationId}
+  </update>
+
+  <!-- 비회원 환자 조회/생성 -->
+  <select id="findPatientByNameAndRrn" resultType="com.hospital.vo.PatientVO">
+    SELECT
+      patient_no          AS patientNo,
+      patient_user_id     AS patientUserId,
+      patient_password    AS patientPassword,
+      patient_name        AS patientName,
+      patient_rrn         AS patientRrn,
+      patient_gender      AS patientGender,
+      patient_phone       AS patientPhone,
+      patient_email       AS patientEmail,
+      patient_created_at  AS patientCreatedAt
+    FROM patients
+   WHERE patient_name = #{name}
+     AND patient_rrn  = #{rrn}
+   ORDER BY patient_no DESC
+  </select>
+
+ <insert id="insertGuestPatient" parameterType="com.hospital.vo.PatientVO">
+  <!-- 8자리 정수 난수 생성(10000000~99999999) → 기존에 없는 값만 하나 선택 -->
+  <selectKey keyProperty="patientNo" resultType="int" order="BEFORE">
+    <![CDATA[
+      SELECT t.candidate
+      FROM (
+        SELECT FLOOR(DBMS_RANDOM.VALUE(0, 90000000)) + 10000000 AS candidate
+        FROM dual
+        CONNECT BY LEVEL <= 100
+      ) t
+      WHERE NOT EXISTS (SELECT 1 FROM patients p WHERE p.patient_no = t.candidate)
+        AND ROWNUM = 1
+    ]]>
+  </selectKey>
+
+  INSERT INTO patients (
+    patient_no,
+    patient_user_id,
+    patient_password,
+    patient_name,
+    patient_rrn,
+    patient_gender,
+    patient_phone,
+    patient_email,
+    patient_created_at
+  ) VALUES (
+    #{patientNo},
+    NULL,
+    NULL,
+    #{patientName},
+    #{patientRrn},
+    NULL,
+    NULL,
+    NULL,
+    SYSDATE
+  )
+</insert>
+
+  <!-- 이름+RRN으로 예약 조회 -->
+  <select id="selectReservationsByNameAndRrn" parameterType="map"
+          resultType="com.hospital.vo.ReservationVO">
+    SELECT
+      r.RESERVATION_ID   AS reservationId,
+      r.PATIENT_NO       AS patientNo,
+      r.DEPARTMENT       AS department,
+      r.DOCTOR_ID        AS doctorId,
+      r.RESERVATION_DATE AS reservationDate,
+      r.STATUS           AS status,
+      r.CREATED_AT       AS createdAt,
+      r.SCHEDULE_ID      AS scheduleId,
+      r.SCHEDULE_TIME    AS scheduleTime
+      FROM RESERVATIONS r
+      JOIN PATIENTS p ON r.PATIENT_NO = p.PATIENT_NO
+     WHERE p.PATIENT_NAME = #{name}
+       AND p.PATIENT_RRN  = #{rrn}
+     ORDER BY r.RESERVATION_DATE DESC, r.CREATED_AT DESC
+  </select>
+
+  <select id="findPatientByRrn" parameterType="string" resultType="com.hospital.vo.PatientVO">
+    SELECT
+      patient_no          AS patientNo,
+      patient_user_id     AS patientUserId,
+      patient_password    AS patientPassword,
+      patient_name        AS patientName,
+      patient_rrn         AS patientRrn,
+      patient_gender      AS patientGender,
+      patient_phone       AS patientPhone,
+      patient_email       AS patientEmail,
+      patient_created_at  AS patientCreatedAt
+    FROM patients
+   WHERE patient_rrn = #{rrn}
+   ORDER BY patient_no DESC
+  </select>
+
+  <!-- 정회원 여부 -->
+  <select id="countRegisteredByRrn" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+      FROM patients
+     WHERE patient_rrn = #{rrn}
+       AND patient_user_id IS NOT NULL
+  </select>
+
+  <!-- 예약 INSERT (문진표와 함께 쓰는 경로) -->
+  <insert id="insertReservation2" parameterType="map">
+    <selectKey keyProperty="reservationId" order="BEFORE" resultType="long">
+      SELECT SEQ_RESERVATION_ID.NEXTVAL FROM dual
+    </selectKey>
+    INSERT INTO RESERVATIONS (
+      RESERVATION_ID, PATIENT_NO, DEPARTMENT, DOCTOR_ID, SCHEDULE_ID,
+      RESERVATION_DATE, SCHEDULE_TIME, STATUS, CREATED_AT
+    ) VALUES (
+      #{reservationId},
+      #{patientNo},
+      #{department, jdbcType=VARCHAR},
+      #{doctorId,   jdbcType=VARCHAR},
+      #{scheduleId},
+      TO_DATE(#{reservationDate}, 'YYYY-MM-DD'),
+      #{reservationTime},
+      #{status},
+      SYSDATE
+    )
+  </insert>
+
+  <select id="lastInsertedReservationId" resultType="long">
+    SELECT SEQ_RESERVATION_ID.CURRVAL FROM dual
+  </select>
+
+  <insert id="insertQuestionnaireWithReservation" parameterType="map">
+  <!-- ⚠ 시퀀스명은 현재 프로젝트에서 쓰던 이름 유지(예: SEQ_QUESTIONNAIRE_ID).
+       다른 이름이면 이 한 줄만 그 이름으로 바꿔주세요. -->
+  <selectKey keyProperty="questionnaireId" order="BEFORE" resultType="long">
+    SELECT SEQ_QUESTIONNAIRE_ID.NEXTVAL FROM dual
+  </selectKey>
+
+  INSERT INTO MEDICAL_QUESTIONNAIRES (
+    QUESTIONNAIRE_ID, RESERVATION_ID, CONTENT, SUBMITTED_AT
+  ) VALUES (
+    #{questionnaireId},
+    #{reservationId},
+    #{content, jdbcType=CLOB},
+    SYSDATE
+  )
+</insert>
+  
+
+  
+
+  <!-- 취소 보조 -->
+  <select id="findScheduleIdByReservationId" parameterType="long" resultType="long">
+    SELECT SCHEDULE_ID FROM RESERVATIONS WHERE RESERVATION_ID = #{reservationId}
+  </select>
+
+  <select id="findDoctorDateTimeByReservationId" parameterType="long" resultType="map">
+    SELECT DOCTOR_ID AS doctorId,
+           RESERVATION_DATE AS reservationDate,
+           SCHEDULE_TIME AS reservationTime
+      FROM RESERVATIONS
+     WHERE RESERVATION_ID = #{reservationId}
+  </select>
+
+ <update id="updateReservationStatusCancelled" parameterType="long">
+  UPDATE RESERVATIONS
+     SET STATUS = '취소'
+   WHERE RESERVATION_ID = #{value}
+</update>
+
+  <!-- doctorId → 부서명 (조인 버전) -->
+  <select id="findDepartmentNameByDoctorId" parameterType="string" resultType="string">
+    SELECT d.NAME
+      FROM USERS u
+      JOIN DEPARTMENTS d ON d.DEPT_ID = u.DEPT_ID
+     WHERE u.USER_ID = #{doctorId}
+  </select>
+
+  <!-- deptId → 부서명 -->
+  <select id="findDepartmentNameByDeptId" parameterType="int" resultType="string">
+    SELECT d.NAME
+      FROM DEPARTMENTS d
+     WHERE d.DEPT_ID = #{deptId}
+  </select>
+
+  <!-- 동일 목적 다른 id (둘 다 정상화) -->
+  <select id="selectDeptNameByDoctorId" parameterType="string" resultType="string">
+    SELECT d.NAME
+      FROM USERS u
+      JOIN DEPARTMENTS d ON d.DEPT_ID = u.DEPT_ID
+     WHERE u.USER_ID = #{doctorId}
+  </select>
+
+  <select id="selectDeptNameByDeptId" parameterType="int" resultType="string">
+    SELECT d.NAME
+      FROM DEPARTMENTS d
+     WHERE d.DEPT_ID = #{deptId}
+  </select>
+  
+  <select id="selectReservationForComplete" parameterType="map"
+        resultType="com.hospital.vo.ReservationVO">
+  SELECT
+    r.RESERVATION_ID   AS reservationId,
+    r.PATIENT_NO       AS patientNo,
+    p.PATIENT_NAME     AS patientName,
+    p.PATIENT_PHONE    AS patientPhone,
+    p.PATIENT_EMAIL    AS patientEmail,
+    r.DEPARTMENT       AS department,
+    d.NAME             AS departmentName,
+    r.DOCTOR_ID        AS doctorId,
+    u.NAME             AS doctorName,
+    r.RESERVATION_DATE AS reservationDate,
+    r.SCHEDULE_TIME    AS scheduleTime,
+    r.SCHEDULE_ID      AS scheduleId,
+    r.STATUS           AS status,
+    r.CREATED_AT       AS createdAt
+  FROM RESERVATIONS r
+  JOIN PATIENTS     p  ON p.PATIENT_NO = r.PATIENT_NO
+  LEFT JOIN DOCTOR_INFO di ON di.DOCTOR_ID = r.DOCTOR_ID
+  LEFT JOIN USERS       u  ON u.USER_ID   = r.DOCTOR_ID
+  LEFT JOIN DEPARTMENTS d  ON d.DEPT_ID   = di.DEPT_ID
+  WHERE r.RESERVATION_ID = #{reservationId}
+    AND r.PATIENT_NO     = #{patientNo}
+</select>
+
+</mapper>

@@ -1,0 +1,32 @@
+@charset "UTF-8";
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fff5f5;
+    padding: 50px;
+    text-align: center;
+}
+.donation-result {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.donation-result.fail h1 {
+    color: #cc0000;
+    margin-bottom: 15px;
+}
+.donation-result p {
+    font-size: 16px;
+    margin: 8px 0;
+}
+.btn-primary {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #0077cc;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+}

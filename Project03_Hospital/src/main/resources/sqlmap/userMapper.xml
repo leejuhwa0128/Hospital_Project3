@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.UserDAO">
+
+	<!-- 로그인 -->
+	<select id="login" parameterType="com.hospital.vo.UserVO"
+		resultType="com.hospital.vo.UserVO">
+		SELECT * FROM users
+		WHERE user_id = #{userId}
+		AND password =
+		#{password}
+	</select>
+
+	<!-- 사용자 추가 (관리자 승인 이후) -->
+	<insert id="insertUser" parameterType="com.hospital.vo.UserVO">
+		INSERT INTO users (
+		user_id, password, name, rrn, gender, phone, email, role, hospital_id,
+		dept_id
+		) VALUES (
+		#{userId}, #{password}, #{name}, #{rrn}, #{gender},
+		#{phone}, #{email}, #{role},
+		#{hospitalId}, #{deptId}
+		)
+	</insert>
+
+	<!-- 의사 추가 정보 -->
+	<insert id="insertDoctorInfo"
+		parameterType="com.hospital.vo.DoctorVO">
+		INSERT INTO doctor_info (
+		doctor_id, dept_id, specialty,
+		bio, profile_image_path
+		) VALUES (
+		#{doctorId}, #{deptId}, #{specialty},
+		#{bio}, #{profileImagePath}
+		)
+	</insert>
+
+	<!-- 협력의 전체 수 -->
+	<select id="getCoopUserCount" resultType="int">
+		SELECT COUNT(*) FROM
+		users WHERE role = 'coop'
+	</select>
+
+	<!-- 페이징 목록 -->
+	<select id="getPagedCoopUsers"
+		resultType="com.hospital.vo.UserVO">
+  <![CDATA[
+    SELECT * 
+    FROM (
+        SELECT inner_query.*, ROWNUM AS rn
+        FROM (
+            SELECT u.user_id, u.password, u.name, u.rrn, u.gender,
+                   u.phone, u.email, u.role, u.hospital_id, u.dept_id,
+                   u.created_at AS regDate,
+                   ph.name AS hospitalName
+            FROM users u
+            LEFT JOIN partner_hospitals ph ON u.hospital_id = ph.hospital_id
+            WHERE u.role = 'coop'
+            ORDER BY u.created_at DESC
+        ) inner_query
+        WHERE ROWNUM <= #{start} + #{size}
+    )
+    WHERE rn > #{start}
+  ]]>
+	</select>
+
+
+
+
+	<!-- 검색 결과 수 -->
+	<select id="countSearchCoopUsers" resultType="int">
+		SELECT COUNT(*)
+		FROM users u
+		LEFT JOIN partner_hospitals ph ON u.hospital_id =
+		ph.hospital_id
+		WHERE u.role = 'coop'
+		AND (LOWER(u.name) LIKE '%' ||
+		LOWER(#{keyword}) || '%'
+		OR LOWER(ph.name) LIKE '%' ||
+		LOWER(#{keyword}) || '%')
+	</select>
+
+	<!-- 검색 + 페이징 -->
+	<select id="searchPagedCoopUsers"
+		resultType="com.hospital.vo.UserVO">
+  <![CDATA[
+    SELECT * 
+    FROM (
+        SELECT inner_query.*, ROWNUM AS rn
+        FROM (
+            SELECT u.user_id, u.password, u.name, u.rrn, u.gender,
+                   u.phone, u.email, u.role, u.hospital_id, u.dept_id,
+                   u.created_at AS regDate,
+                   ph.name AS hospitalName
+            FROM users u
+            LEFT JOIN partner_hospitals ph ON u.hospital_id = ph.hospital_id
+            WHERE u.role = 'coop'
+              AND (LOWER(u.name) LIKE '%' || LOWER(#{keyword}) || '%'
+                   OR LOWER(ph.name) LIKE '%' || LOWER(#{keyword}) || '%')
+            ORDER BY u.created_at DESC
+        ) inner_query
+        WHERE ROWNUM <= #{start} + #{size}
+    )
+    WHERE rn > #{start}
+  ]]>
+	</select>
+
+
+	<!-- 협력의 삭제 -->
+	<delete id="deleteUser" parameterType="string">
+		DELETE FROM users WHERE
+		user_id = #{userId}
+	</delete>
+
+	<!-- 병원 목록 -->
+	<select id="selectHospitals"
+		resultType="com.hospital.vo.PartnerHospitalVO">
+		SELECT hospital_id, name FROM partner_hospitals ORDER BY
+		name
+	</select>
+
+	<select id="getUserById" parameterType="string"
+		resultType="com.hospital.vo.UserVO">
+		SELECT
+		u.user_id, u.password, u.name, u.rrn, u.gender,
+		u.phone, u.email, u.role, u.hospital_id, u.dept_id,
+		u.created_at AS
+		regDate,
+		ph.name AS hospitalName
+		FROM users u
+		LEFT JOIN partner_hospitals
+		ph ON u.hospital_id = ph.hospital_id
+		WHERE u.user_id = #{userId}
+	</select>
+
+	<!-- 진료과 목록 -->
+	<select id="selectDepartments"
+		resultType="com.hospital.vo.DepartmentVO">
+		SELECT dept_id, name FROM departments ORDER BY name
+	</select>
+
+	<select id="existsByUserId" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM users WHERE user_id = #{userId}
+	</select>
+
+	<select id="existsByRrn" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM users WHERE rrn = #{rrn}
+	</select>
+
+	<select id="existsByEmail" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM users WHERE email = #{email}
+	</select>
+
+	<!-- userId 중복 확인 (users + pending_users) -->
+	<select id="existsUserIdAll" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM (
+		SELECT user_id FROM users
+		UNION ALL
+		SELECT user_id FROM
+		pending_users
+		)
+		WHERE user_id = #{userId}
+	</select>
+
+	<!-- email 중복 확인 -->
+	<select id="existsEmailAll" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM (
+		SELECT email FROM users
+		UNION ALL
+		SELECT email FROM
+		pending_users
+		)
+		WHERE email = #{email}
+	</select>
+
+	<!-- 주민등록번호 중복 확인 -->
+	<select id="existsRrnAll" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM (
+		SELECT rrn FROM users
+		UNION ALL
+		SELECT
+		rrn FROM
+		pending_users
+		)
+		WHERE rrn = #{rrn}
+	</select>
+
+
+	<!-- 대기 사용자 등록 -->
+	<insert id="insertPendingUser"
+		parameterType="com.hospital.vo.UserVO">
+		INSERT INTO pending_users (
+		pending_id,
+		user_id, password,
+		name, rrn,
+		gender, phone, email, role, hospital_id,
+		dept_id, applied_at,
+		status
+		) VALUES (
+		SEQ_PENDING_USER_ID.NEXTVAL,
+		#{userId}, #{password},
+		#{name}, #{rrn}, #{gender},
+		#{phone}, #{email}, #{role}, #{hospitalId},
+		#{deptId},
+		SYSDATE, '대기'
+		)
+	</insert>
+
+	<!-- 대기 사용자 전체 조회 -->
+	<select id="selectPendingUsers"
+		resultType="com.hospital.vo.PendingUserVO">
+		SELECT
+		pu.pending_id AS pendingId,
+		pu.user_id AS userId,
+		pu.password AS password,
+		pu.name AS name,
+		pu.rrn AS rrn,
+		pu.gender AS
+		gender,
+		pu.phone AS phone,
+		pu.email AS email,
+		pu.role AS role,
+		pu.hospital_id AS hospitalId,
+		pu.dept_id AS deptId,
+		pu.applied_at AS
+		appliedAt,
+		pu.status AS status,
+		pu.reviewed_by AS reviewedBy,
+		pu.reviewed_at AS reviewedAt,
+		pu.reject_reason AS rejectReason,
+		a.name
+		AS reviewerName
+		FROM pending_users pu
+		LEFT JOIN admins a ON a.admin_id =
+		pu.reviewed_by
+		WHERE pu.status = '대기'
+	</select>
+
+	<!-- 특정 대기 사용자 조회 -->
+	<select id="selectPendingUserById"
+		resultType="com.hospital.vo.PendingUserVO">
+		SELECT
+		pu.pending_id AS pendingId,
+		pu.user_id AS userId,
+		pu.password AS password,
+		pu.name AS name,
+		pu.rrn AS rrn,
+		pu.gender AS
+		gender,
+		pu.phone AS phone,
+		pu.email AS email,
+		pu.role AS role,
+		pu.hospital_id AS hospitalId,
+		pu.dept_id AS deptId,
+		pu.applied_at AS
+		appliedAt,
+		pu.status AS status,
+		pu.reviewed_by AS reviewedBy,
+		pu.reviewed_at AS reviewedAt,
+		pu.reject_reason AS rejectReason,
+		a.name
+		AS reviewerName
+		FROM pending_users pu
+		LEFT JOIN admins a ON a.admin_id =
+		pu.reviewed_by
+		WHERE pu.user_id = #{userId}
+	</select>
+
+	<!-- 승인 상태 확인 -->
+	<select id="findPendingUser"
+		resultType="com.hospital.vo.PendingUserVO">
+		SELECT * FROM pending_users
+		WHERE user_id = #{userId}
+		AND
+		password = #{password}
+	</select>
+
+	<!-- 승인 요청 전체 확인 -->
+	<select id="selectAllPendingUsers"
+		resultType="com.hospital.vo.PendingUserVO">
+		SELECT
+		pu.pending_id AS pendingId,
+		pu.user_id AS userId,
+		pu.password AS password,
+		pu.name AS name,
+		pu.rrn AS rrn,
+		pu.gender AS
+		gender,
+		pu.phone AS phone,
+		pu.email AS email,
+		pu.role AS role,
+		pu.hospital_id AS hospitalId,
+		pu.dept_id AS deptId,
+		pu.applied_at AS
+		appliedAt,
+		pu.status AS status,
+		pu.reviewed_by AS reviewedBy,
+		pu.reviewed_at AS reviewedAt,
+		pu.reject_reason AS rejectReason,
+		a.name
+		AS reviewerName
+		FROM pending_users pu
+		LEFT JOIN admins a ON a.admin_id =
+		pu.reviewed_by
+		ORDER BY pu.applied_at DESC
+	</select>
+
+	<!-- 승인 요청 상태별 확인 -->
+	<select id="getPendingUsersByStatus" parameterType="string"
+		resultType="com.hospital.vo.PendingUserVO">
+		SELECT
+		pu.pending_id AS pendingId,
+		pu.user_id AS userId,
+		pu.password AS password,
+		pu.name AS name,
+		pu.rrn AS rrn,
+		pu.gender AS
+		gender,
+		pu.phone AS phone,
+		pu.email AS email,
+		pu.role AS role,
+		pu.hospital_id AS hospitalId,
+		pu.dept_id AS deptId,
+		pu.applied_at AS
+		appliedAt,
+		pu.status AS status,
+		pu.reviewed_by AS reviewedBy,
+		pu.reviewed_at AS reviewedAt,
+		pu.reject_reason AS rejectReason,
+		a.name
+		AS reviewerName
+		FROM pending_users pu
+		LEFT JOIN admins a ON a.admin_id =
+		pu.reviewed_by
+		WHERE pu.status = #{status}
+		ORDER BY pu.applied_at DESC
+	</select>
+
+	<!-- 승인 요청 이름 혹은 아이디 검색 -->
+	<select id="searchPendingUsers" parameterType="string"
+		resultType="com.hospital.vo.PendingUserVO">
+		SELECT
+		pu.pending_id AS pendingId,
+		pu.user_id AS userId,
+		pu.password AS password,
+		pu.name AS name,
+		pu.rrn AS rrn,
+		pu.gender AS
+		gender,
+		pu.phone AS phone,
+		pu.email AS email,
+		pu.role AS role,
+		pu.hospital_id AS hospitalId,
+		pu.dept_id AS deptId,
+		pu.applied_at AS
+		appliedAt,
+		pu.status AS status,
+		pu.reviewed_by AS reviewedBy,
+		pu.reviewed_at AS reviewedAt,
+		pu.reject_reason AS rejectReason,
+		a.name
+		AS reviewerName
+		FROM pending_users pu
+		LEFT JOIN admins a ON a.admin_id =
+		pu.reviewed_by
+		WHERE (LOWER(pu.user_id) LIKE '%' || LOWER(#{keyword})
+		|| '%'
+		OR LOWER(pu.name) LIKE '%' || LOWER(#{keyword}) || '%')
+		ORDER BY
+		pu.applied_at DESC
+	</select>
+
+
+	<!-- 이메일로 유저 조회 -->
+	<select id="findUserByEmail" resultType="UserVO">
+		SELECT * FROM users
+		WHERE email = #{email}
+	</select>
+
+	<!-- 카카오 유저 추가 -->
+	<insert id="insertSocialUser">
+		INSERT INTO users (
+		user_id, name, email, role,
+		created_at
+		) VALUES (
+		#{userId}, #{name}, #{email}, #{role}, SYSDATE
+		)
+	</insert>
+
+
+	<select id="findPatientByEmail" resultType="PatientVO">
+		SELECT * FROM
+		patients WHERE patient_email = #{email}
+	</select>
+
+	<!-- 전체 대기자 수 -->
+	<select id="countPendingUsers" resultType="int">
+		SELECT COUNT(*) FROM
+		pending_users WHERE status = '대기'
+	</select>
+
+	<!-- 역할별 대기자 수 -->
+	<select id="countPendingUsersByRole" resultType="int">
+		SELECT COUNT(*)
+		FROM pending_users
+		WHERE status = '대기' AND role = #{role}
+	</select>
+
+	<update id="updateProfile"
+		parameterType="com.hospital.vo.UserVO">
+		UPDATE users
+		SET
+		name = #{name},
+		phone = #{phone},
+		email =
+		#{email},
+		hospital_id = #{hospitalId},
+		dept_id = #{deptId},
+		password =
+		#{password}
+		WHERE user_id = #{userId}
+	</update>
+
+	<update id="updateUser" parameterType="com.hospital.vo.UserVO">
+		UPDATE users
+		SET
+		name =
+		#{name},
+		phone = #{phone},
+		email = #{email},
+		hospital_id = #{hospitalId},
+		dept_id = #{deptId},
+		password = #{password}
+		WHERE user_id = #{userId}
+	</update>
+	<select id="existsUserForReset" parameterType="map"
+		resultType="int"> SELECT COUNT(1) FROM users WHERE user_id = #{userId} AND
+		name = #{name} AND email = #{email}
+	</select>
+	<!-- 비밀번호 업데이트 -->
+	<update id="updatePassword" parameterType="map"> UPDATE users SET
+		password = #{password} WHERE user_id = #{userId}
+	</update>
+
+	<!-- ID 찾기: name + (phoneDigits 우선, 없으면 phone, 아니면 email) -->
+<select id="findUserId" parameterType="map" resultType="string">
+  SELECT user_id
+  FROM (
+    SELECT user_id
+    FROM users
+    <where>
+      name = #{name}
+      <choose>
+        <!-- 휴대폰 숫자만 비교 우선 -->
+        <when test="phoneDigits != null and phoneDigits != ''">
+          AND REGEXP_REPLACE(phone, '[^0-9]', '') = #{phoneDigits}
+        </when>
+        <!-- 원문 휴대폰 비교 -->
+        <when test="phone != null and phone != ''">
+          AND phone = #{phone}
+        </when>
+        <!-- 이메일 비교 (phone/phoneDigits 없을 때) -->
+        <otherwise>
+          AND email = #{email}
+        </otherwise>
+      </choose>
+    </where>
+    ORDER BY created_at DESC
+  )
+  WHERE ROWNUM = 1
+</select>
+
+</mapper>

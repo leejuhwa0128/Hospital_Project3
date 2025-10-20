@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="searchMapper">
+
+  <!-- 🔍 제목 또는 내용에 keyword가 포함된 항목 검색 -->
+  <select id="searchAll" resultType="com.hospital.vo.SearchResultVO" parameterType="string">
+    SELECT 
+      title,
+      content,
+      url,
+      page_title AS pageTitle
+    FROM search_index
+    WHERE LOWER(title) LIKE '%' || LOWER(#{keyword}) || '%'
+       OR LOWER(content) LIKE '%' || LOWER(#{keyword}) || '%'
+  </select>
+  
+  <select id="searchByKeyword" resultType="com.hospital.vo.SearchResultVO">
+    SELECT 
+      title,
+      content,
+      url,
+      page_title AS pageTitle
+    FROM search_index
+    WHERE LOWER(title) LIKE '%' || LOWER(#{keyword}) || '%'
+      OR LOWER(content) LIKE '%' || LOWER(#{keyword}) || '%'
+  </select>
+
+</mapper>

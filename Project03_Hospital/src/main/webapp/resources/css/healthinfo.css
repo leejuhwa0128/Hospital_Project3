@@ -1,0 +1,160 @@
+@charset "UTF-8";
+
+/* ===== Base ===== */
+:root{
+  --bg:#f9fbfd; --ink:#111; --muted:#667085; --brand:#1e3a8a;
+  --line:#e6ebf1; --card:#fff; --shadow:0 10px 30px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)}
+a{color:inherit;text-decoration:none}
+
+/* ===== Layout ===== */
+.main-container{display:flex;max-width:1800px;margin:0 auto}
+.sidebar{width:160px !important;}                     /* 좌측 카테고리 폭 축소 */
+.content-area{padding:0 24px 0 12px !important;}      /* 사이드바-컨텐츠 간격 축소 */
+
+/* ===== Outer Page Card ===== */
+.section-card{
+  width:100%;
+  max-width:1500px;                                   /* 필요시 1600~1800으로 조절 */
+  margin: 40px auto 28px; 
+  padding:36px 64px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+.page-title{margin:0 0 18px;font-size:30px;font-weight:800;color:var(--brand)}
+
+/* ===== 카드 그리드(3x2 고정) ===== */
+.card-grid{
+  display:grid !important;
+  grid-template-columns:repeat(3, minmax(380px,1fr)) !important;
+  gap:32px !important;
+}
+
+/* ===== 카드 ===== */
+.card{
+  display:flex !important;
+  flex-direction:column !important;
+  height:300px !important;                             /* 동일 높이 */
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+.thumb{flex:0 0 auto !important;}
+.thumb img{
+  display:block !important;
+  width:100% !important;
+  height:180px !important;                              /* 썸네일 고정 높이 */
+  object-fit:cover !important;
+}
+.info{
+  flex:1 1 auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:6px !important;
+  padding:12px 14px !important;
+}
+.title{
+  margin:0 !important;
+  font-size:16px !important;
+  font-weight:700 !important;
+  line-height:1.4 !important;
+  display:-webkit-box !important;
+  -webkit-line-clamp:1 !important;
+  -webkit-box-orient:vertical !important;
+  overflow:hidden !important;
+}
+.desc{
+  font-size:14px !important;
+  line-height:1.6 !important;
+  color:#2b2f36 !important;
+  display:-webkit-box !important;
+  -webkit-line-clamp:2 !important;
+  -webkit-box-orient:vertical !important;
+  overflow:hidden !important;
+}
+.more-btn{
+  margin-top:auto !important;
+  align-self:flex-start !important;
+  display:inline-block !important;
+  padding:8px 12px !important;
+  border:1px solid #0b63ff !important;
+  border-radius:8px !important;
+  background:#0b63ff !important;
+  color:#fff !important;
+  font-size:13px !important;
+  text-decoration:none !important;
+}
+.more-btn:hover{background:#084bbf !important;border-color:#084bbf !important;}
+
+/* ===== Pagination ===== */
+.page-nav{margin-top:28px !important;}
+.page-nav .pager{
+  list-style:none !important;
+  display:flex !important;
+  flex-wrap:wrap !important;
+  justify-content:center !important;
+  align-items:center !important;
+  gap:8px !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+.page-nav{ margin-top:28px !important; }
+.page-nav .pager{
+  list-style:none !important;
+  display:flex !important;
+  flex-wrap:wrap !important;
+  justify-content:center !important;
+  align-items:center !important;
+  gap:8px !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+.page-nav .pager li{ display:flex !important; }
+
+/* a, button 공통 베이스 */
+.page-nav .pager a,
+.page-nav .pager button{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:36px !important;
+  height:36px !important;
+  padding:0 12px !important;
+  border:1px solid var(--line) !important;
+  border-radius:10px !important;
+  background:#fff !important;
+  font-size:14px !important;
+  color:#333 !important;
+  text-decoration:none !important;
+  cursor:pointer !important;
+  -webkit-appearance:none; appearance:none;  /* 버튼 기본 스타일 리셋 */
+}
+
+/* hover */
+.page-nav .pager a:hover,
+.page-nav .pager button:hover:not(:disabled){
+  background:#0b63ff !important;
+  color:#fff !important;
+  border-color:#0b63ff !important;
+}
+
+/* 현재 페이지 */
+.page-nav .pager .active a,
+.page-nav .pager .active button{
+  background:var(--brand) !important;
+  color:#fff !important;
+  border-color:var(--brand) !important;
+  font-weight:700 !important;
+  cursor:default !important;
+}
+
+/* 비활성 */
+.page-nav .pager .disabled a{ pointer-events:none !important; }
+.page-nav .pager button:disabled{ opacity:.45 !important; cursor:not-allowed !important; }
+.page-nav .pager .disabled a,
+.page-nav .pager .disabled span{ opacity:.45 !important; }

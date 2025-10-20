@@ -1,0 +1,128 @@
+@charset "UTF-8";
+@import url('/css/common.css');
+
+body {
+  background-color: #f9fbfd;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 연혁 메인 레이아웃 */
+.section-box.history-section {
+  max-width: 1300px;
+  width: 95vw;
+  margin: 20px auto 60px;
+  padding: 60px 60px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.section-box.history-section h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #0a2a5a;
+  margin-bottom: 30px;
+}
+
+/* 탭 버튼 */
+.history-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tab-button.active {
+  background-color: #0a2a5a;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 연혁 카드 */
+.timeline-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.year-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  padding: 40px 50px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.year-card h3 {
+  font-size: 20px; /* ⬆️ 기존 18px → 20px */
+  font-weight: bold;
+  color: #0a2a5a;
+  margin-bottom: 20px;
+}
+
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 20px;           /* 내부 여백 유지 */
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 25px;                    /* 선 위치 = 점 중심 기준 */
+  width: 2px;
+  background-color: #d1d5db;
+  z-index: 0;
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.timeline-item .dot {
+  position: relative;
+  top: 3px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #000;
+  background-color: #fff;
+  border-radius: 50%;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* 내용 텍스트 */
+.timeline-item .text {
+  font-size: 16px; /* ⬆️ 기존 15px → 16px */
+  color: #333;
+  line-height: 1.7;
+}
+
+/* 타임라인 간격 살짝 늘림 */
+.timeline {
+  gap: 24px; /* ⬆️ 기존 20px → 24px */
+}

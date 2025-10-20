@@ -1,0 +1,79 @@
+@charset "UTF-8";
+
+/* 전체 레이아웃 */
+body {
+  margin: 0;         /* ← header에 영향 줌 */
+  padding: 40px;     /* ← header 밀림 발생 */
+}
+
+.main-container {
+  display: flex;
+}
+
+.content-area {
+  flex: 1;
+  padding: 0 40px;
+}
+
+/* 카드 박스 - 목록과 동일한 크기 */
+.card-box {
+  max-width: 1100px;           /* ✅ 기존: 900px → 더 가로로 넓히기 */
+  margin: 40px auto 0 auto;    /* ✅ 위 여백 추가 및 가운데 정렬 */
+  background: #fff;
+  border-radius: 12px;
+  padding: 50px;               /* ✅ 넉넉한 안쪽 여백 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+/* 제목 */
+.title {
+  font-size: 28px;
+  color: #1e3a8a;
+  margin-bottom: 10px;
+}
+
+/* 메타 정보 */
+.meta {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 25px;
+}
+
+/* 썸네일 */
+.thumbnail {
+  width: 100%;                 /* ✅ 부모 너비 꽉 채움 */
+  max-width: 700px;            /* ✅ 최대 너비 설정 (원하는 만큼 줄이기 가능) */
+  height: auto;                /* ✅ 비율 유지하며 자동 높이 */
+  display: block;
+  margin: 30px auto;           /* ✅ 가운데 정렬 + 여백 */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  object-fit: cover;           /* ✅ 이미지 비율 유지하며 잘림 방지 */
+}
+
+/* 본문 */
+.content {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #333;
+  white-space: pre-line;
+  margin-bottom: 30px;
+}
+
+/* 버튼 */
+.btn-group {
+  text-align: right;
+}
+
+.btn-group a {
+  display: inline-block;
+  padding: 10px 18px;
+  background-color: #1e3a8a;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.btn-group a:hover {
+  background-color: #143b7d;
+}

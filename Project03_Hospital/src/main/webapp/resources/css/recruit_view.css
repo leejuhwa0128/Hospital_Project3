@@ -1,0 +1,218 @@
+@charset "UTF-8";
+
+/* ============= Global ============= */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f5f7fa;
+  color: #1f2937;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============= Layout ============= */
+.content-area {
+  max-width: 1300px;     /* 고정폭 대신 반응형 최대폭 */
+  width: 100%;
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 40px 44px;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 768px) {
+  .content-area { padding: 28px 22px; margin: 24px auto; }
+}
+
+/* ============= Title ============= */
+.title {
+  font-size: 30px;
+  font-weight: 800;
+  color: #003366;
+  margin: 0 0 22px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* ============= Thumbnail ============= */
+.thumbnail-section {
+  text-align: center;
+  margin: 20px 0 28px;
+}
+
+.thumbnail-section img {
+  display: inline-block;
+  width: 100%;
+  max-width: 980px;      /* 카드 안에서 적절한 최대폭 */
+  max-height: 360px;     /* 과도한 세로방지 */
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+/* ============= Info List (한 줄형) ============= */
+/* HTML은 <div class="info-list"><div class="row"><span class="label">..</span><span class="value">..</span></div>… */
+.info-list {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0 26px;
+  border: 1px solid #e9eef5;
+  border-radius: 12px;
+  background: #fcfdff;
+  overflow: hidden;
+}
+
+.info-list .row {
+  display: grid;
+  grid-template-columns: 150px 1fr;  /* 라벨 / 값 */
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e9eef5;
+  line-height: 1.85;
+}
+
+.info-list .row:last-child { border-bottom: 0; }
+
+.info-list .label {
+  color: #0f3f7a;
+  font-weight: 700;
+  letter-spacing: .1px;
+}
+
+.info-list .value {
+  color: #111827;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .info-list .row { grid-template-columns: 120px 1fr; padding: 12px 14px; gap: 12px; }
+}
+
+/* ============= Sections ============= */
+.section {
+  margin: 28px 0;
+}
+
+.section h4 {
+  font-size: 18px;
+  margin: 0 0 12px;
+  color: #0f3f7a;
+  font-weight: 800;
+}
+
+/* 본문 내용 */
+.description {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #374151;
+  white-space: pre-wrap;          /* 엔터 유지 */
+  border: 1px solid #e9eef5;
+  background: #fbfcff;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+/* ============= Buttons ============= */
+.btn-area {
+  text-align: right;
+  margin-top: 26px;
+}
+
+.back-btn {
+  display: inline-block;
+  background-color: #0d6efd;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: .2px;
+  transition: transform .12s ease, filter .12s ease;
+  box-shadow: 0 6px 16px rgba(13,110,253,.18);
+}
+
+.back-btn:hover {
+  filter: brightness(.95);
+  transform: translateY(-1px);
+}
+
+/* ============= Utilities ============= */
+.muted { color: #6b7280; }
+
+
+
+
+/* ===== 썸네일 ===== */
+.thumbnail-section {
+  text-align: center;
+  margin: 24px 0 28px;
+}
+.thumbnail-section .thumb-img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 900px;      /* 카드 안에서 보기 좋은 최대폭 */
+  max-height: 420px;     /* 너무 길게 커지지 않도록 */
+  object-fit: contain;   /* 이미지 일부가 잘리지 않게 */
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+/* ===== 정보 그리드 ===== */
+/* HTML: <div class="info-grid"><div><strong>라벨</strong> 값</div>… */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;     /* 모바일: 한 줄 */
+  gap: 10px;
+  padding: 16px 18px;
+  border: 1px solid #e9eef5;
+  border-radius: 12px;
+  background: #fcfdff;
+  margin-bottom: 26px;
+}
+.info-grid > div {
+  line-height: 1.9;               /* 줄 간격 넉넉하게 */
+  padding: 6px 2px;
+  border-bottom: 1px solid #eef2f7;
+}
+.info-grid > div:last-child { border-bottom: 0; }
+.info-grid strong {
+  display: inline-block;
+  width: 110px;                   /* 라벨 정렬 */
+  min-width: 110px;
+  color: #0f3f7a;
+  font-weight: 800;
+  margin-right: 8px;
+}
+
+/* 데스크톱에서는 2열 배치 */
+@media (min-width: 900px) {
+  .info-grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 22px;
+    row-gap: 8px;
+  }
+  .info-grid > div {
+    border-bottom: none;
+    padding: 4px 2px 10px;
+  }
+}
+
+/* ===== 상세 내용 박스 ===== */
+.section h4 { 
+  font-size: 18px; 
+  margin: 0 0 12px; 
+  color: #0f3f7a; 
+  font-weight: 800; 
+}
+.description {
+  border: 1px solid #e9eef5;
+  background: #fbfcff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  font-size: 16px;
+  line-height: 1.9;               /* 줄 간격 업 */
+  color: #374151;
+  white-space: pre-wrap;
+}
+

@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+/* 🔷 공통 큰 네모 박스 스타일 */
+.org-section-box {
+  max-width: 1400px;
+  width: 95vw;
+  margin: 20px auto;
+  padding: 300px 80px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* 🔷 제목 */
+.org-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #0a2a5a;
+}
+
+/* 🔷 이미지 */
+.org-image {
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* 🔷 설명 문구 */
+.org-description {
+  font-size: 17px;
+  color: #333;
+  line-height: 1.7;
+}

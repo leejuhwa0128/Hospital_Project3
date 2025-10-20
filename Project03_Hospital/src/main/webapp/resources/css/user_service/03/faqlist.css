@@ -1,0 +1,189 @@
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f9fbfd;
+    padding: 40px;
+}
+
+.main-container {
+    display: flex;
+}
+
+/* 박스 스타일이 적용될 메인 컨텐츠 영역 */
+.content-area {
+    flex: 1;
+    background: #fff;
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-left: 30px;
+    margin-top: 40px;
+}
+
+/* 페이지 제목 스타일 (이모지 포함) */
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e3f2fd; /* 파란색 구분선 */
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+h2 .emoji {
+    margin-right: 10px;
+    font-size: 28px;
+}
+
+/* FAQ 페이지 설명 문구 */
+.faq-description {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+.faq-description p {
+    margin: 0;
+}
+
+/* 검색 폼 */
+.search-box {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.search-box select,
+.search-box input[type="text"] {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.search-box input[type="text"] {
+    width: 250px;
+}
+
+.search-box input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.search-box input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* 탭 메뉴 */
+.tab-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* ✅ 탭 메뉴 글씨색 진하게 */
+.tab-menu li a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #444; /* 글씨색 진하게 변경 */
+    font-weight: bold;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s;
+}
+
+.tab-menu li a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* FAQ 리스트 */
+.faq-box {
+    border-bottom: 1px solid #e9ecef;
+    padding: 20px 0;
+}
+.faq-box:first-of-type {
+    border-top: 1px solid #e9ecef;
+}
+
+/* ✅ 질문 글씨색 진하게 */
+.faq-question {
+    font-size: 17px;
+    font-weight: bold;
+    color: #212529; /* 글씨색 아주 진하게 변경 */
+    cursor: pointer;
+    position: relative;
+    padding-right: 30px;
+    transition: color 0.2s;
+}
+
+.faq-question:hover {
+    color: #007bff;
+}
+.faq-question::before {
+    content: "Q";
+    color: #007bff;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* ✅ 답변 글씨색 진하게 */
+.faq-answer {
+    font-size: 15px;
+    color: #444; /* 글씨색 진하게 변경 */
+    line-height: 1.7;
+    margin-top: 15px;
+    padding-left: 30px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+.faq-answer.open {
+    max-height: 500px;
+    padding-top: 15px;
+    padding-bottom: 0;
+}
+
+.page-btns {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* ✅ 페이지네이션 글씨색 진하게 */
+.page-btns a {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    text-decoration: none;
+    color: #444; /* 글씨색 진하게 변경 */
+    border-radius: 4px;
+    margin: 0 4px;
+    transition: all 0.2s;
+}
+.page-btns a.active, .page-btns a:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}

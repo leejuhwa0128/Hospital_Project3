@@ -1,0 +1,131 @@
+@charset "UTF-8";
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f9fbfd;
+    padding: 40px;
+}
+
+.main-container {
+    display: flex;
+}
+
+.content-area {
+    flex: 1;
+    background: #fff;
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-left: 30px;
+    margin-top: 40px;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+    display: flex; /* 제목에 이모티콘을 추가하기 위한 설정 */
+    align-items: center;
+}
+
+h2 .emoji {
+    margin-right: 10px;
+    font-size: 28px; /* 이모티콘 크기 조정 */
+}
+
+/* ------------------------------------- */
+/* 테이블 스타일 (styled-table과 동일하게 적용) */
+/* ------------------------------------- */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.styled-table thead tr {
+    background-color: #f8f9fa;
+    color: #34495e;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.styled-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f5faff;
+}
+
+.styled-table td a {
+    text-decoration: none;
+    color: #34495e;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.styled-table td a:hover {
+    color: #007bff;
+}
+
+/* ------------------------------------- */
+/* 답변 상태 배지 (status-badge와 동일하게 적용) */
+/* ------------------------------------- */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.status-badge.complete {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.pending {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* ------------------------------------- */
+/* 버튼 스타일 */
+/* ------------------------------------- */
+.btn-group {
+    text-align: right;
+    margin-top: 30px;
+}
+
+.btn-group a {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    border: 1px solid #ccc;
+    margin-left: 5px;
+}
+
+.btn-group a.back-btn {
+    background-color: #f8f9fa;
+    color: #555;
+    border-color: #ddd;
+}
+
+.btn-group a.back-btn:hover {
+    background-color: #e9ecef;
+}

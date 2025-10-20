@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.dao.CertificatesDAO">
+   <resultMap id="certificateResultMap"
+      type="com.hospital.vo.CertificateVO">
+      <id property="certificateId" column="certificate_id" />
+      <result property="patientNo" column="patient_no" />
+      <result property="recordId" column="record_id" />
+      <result property="type" column="type" />
+      <result property="content" column="content" />
+      <result property="issuedAt" column="issued_at" />
+      <result property="issuedBy" column="issued_by" />
+      <result property="method" column="method" />
+      <result property="requestMethod" column="request_method" />
+      <result property="status" column="status" />
+      <result property="viewedAt" column="viewed_at" />
+       <result property="issuedByName" column="issued_by_name"/> 
+
+      <association property="patientVO"
+         resultMap="patientResultMap" javaType="com.hospital.vo.PatientVO" />
+      <association property="medicalRecordVO"
+         resultMap="medicalRecordResultMap"
+         javaType="com.hospital.vo.MedicalRecordVO" />
+   </resultMap>
+
+   <resultMap id="patientResultMap"
+      type="com.hospital.vo.PatientVO">
+      <id property="patientNo" column="p_patient_no" />
+      <result property="patientUserId" column="p_patient_user_id" />
+      <result property="patientName" column="p_patient_name" />
+      <result property="patientRrn" column="p_patient_rrn" />
+      <result property="patientGender" column="p_patient_gender" />
+      <result property="patientPhone" column="p_patient_phone" />
+      <result property="patientEmail" column="p_patient_email" />
+      <result property="patientCreatedAt"
+         column="p_patient_created_at" />
+   </resultMap>
+
+   <resultMap id="medicalRecordResultMap"
+      type="com.hospital.vo.MedicalRecordVO">
+      <id property="recordId" column="mr_record_id" />
+      <result property="reservationId" column="mr_reservation_id" />
+      <result property="doctorId" column="mr_doctor_id" />
+      <result property="diagnosis" column="mr_diagnosis" />
+      <result property="treatment" column="mr_treatment" />
+      <result property="prescription" column="mr_prescription" />
+      <result property="recordDate" column="mr_record_date" />
+      <result property="doctorName" column="mr_doctor_name" />
+      <result property="content" column="mr_content" />
+      <result property="medication" column="mr_medication" />
+   </resultMap>
+
+   <insert id="insertCertificate" useGeneratedKeys="true"
+      keyProperty="certificateId">
+      <selectKey keyProperty="certificateId" resultType="int"
+         order="BEFORE">
+         SELECT seq_certificate_id.NEXTVAL FROM DUAL
+      </selectKey>
+      INSERT INTO certificates (
+      certificate_id, patient_no, record_id, type, content, issued_at, issued_by, method,
+      request_method, status
+      ) VALUES (
+      #{certificateId}, #{patientNo}, #{recordId}, #{type}, #{content}, #{issuedAt},
+      #{issuedBy}, #{method}, #{requestMethod}, #{status}
+      )
+   </insert>
+
+   <select id="selectCertificatesByPatientNo"
+      resultMap="certificateResultMap">
+      SELECT
+      c.certificate_id, c.patient_no, c.type, c.content, c.issued_at, c.status, c.method,
+      c.request_method, c.viewed_at,
+      p.patient_name AS p_patient_name, p.patient_rrn AS p_patient_rrn
+      FROM
+      certificates c
+      JOIN patients p ON c.patient_no = p.patient_no
+      WHERE
+      c.patient_no = #{patientNo}
+      ORDER BY c.issued_at DESC
+   </select>
+
+   <select id="selectCertificateById"
+      resultMap="certificateResultMap">
+      SELECT
+      c.certificate_id, c.patient_no, c.record_id, c.type, c.content, c.issued_at,
+      c.issued_by, u.name AS issued_by_name,
+      c.status, c.method, c.request_method, c.viewed_at,
+      p.patient_no AS p_patient_no, p.patient_user_id AS p_patient_user_id,
+      p.patient_password AS p_patient_password,
+      p.patient_name AS p_patient_name, p.patient_rrn AS p_patient_rrn, p.patient_gender
+      AS p_patient_gender,
+      p.patient_phone AS p_patient_phone, p.patient_email AS p_patient_email,
+      p.patient_created_at AS p_patient_created_at,
+      mr.record_id AS mr_record_id, mr.reservation_id AS mr_reservation_id, mr.doctor_id
+      AS mr_doctor_id,
+      mr.diagnosis AS mr_diagnosis, mr.treatment AS mr_treatment, mr.prescription AS
+      mr_prescription, mr.record_date AS mr_record_date,
+      mr.content AS mr_content,
+      mr.medication AS mr_medication,
+      u.name AS mr_doctor_name
+      FROM
+      certificates c
+      LEFT JOIN patients p ON c.patient_no = p.patient_no
+      LEFT JOIN medical_records mr ON c.record_id = mr.record_id
+      LEFT JOIN users u ON mr.doctor_id = u.user_id
+      WHERE
+      c.certificate_id = #{certificateId}
+   </select>
+
+   <update id="updateCertificate">
+      UPDATE certificates
+      SET
+      status = #{status},
+      issued_by = #{issuedBy},
+      <if test="issuedAt != null">issued_at = #{issuedAt},</if>
+      content = #{content},
+      record_id = #{recordId}
+      WHERE
+      certificate_id = #{certificateId}
+   </update>
+
+   <select id="getCertificatesByStatus"
+      resultMap="certificateResultMap">
+      SELECT
+      c.certificate_id,
+      c.patient_no,
+      c.type,
+      c.issued_at,
+      c.status,
+      c.request_method, c.method, p.patient_name AS p_patient_name
+      FROM
+      certificates c
+      JOIN patients p ON c.patient_no = p.patient_no
+      WHERE
+      c.status = #{status}
+      ORDER BY c.issued_at DESC
+   </select>
+
+   <update id="updateViewedAt">
+      UPDATE certificates
+      SET viewed_at = #{viewedAt}
+      WHERE certificate_id = #{certificateId}
+   </update>
+
+   <!-- selectLatestMedicalRecordByPatientNo 쿼리 최종 수정 -->
+   <select id="selectMedicalRecordsByPatientNo"
+      resultMap="medicalRecordResultMap">
+      SELECT
+      mr.record_id AS mr_record_id,
+      mr.reservation_id AS mr_reservation_id,
+      mr.doctor_id AS mr_doctor_id,
+      mr.diagnosis AS mr_diagnosis,
+      mr.treatment AS mr_treatment,
+      mr.prescription AS mr_prescription,
+      mr.record_date AS mr_record_date,
+      mr.content AS mr_content,
+      mr.medication AS mr_medication,
+      u.name AS mr_doctor_name
+      FROM medical_records mr
+      JOIN reservations r ON mr.reservation_id = r.reservation_id
+      LEFT JOIN users u ON mr.doctor_id = u.user_id
+      WHERE r.patient_no = #{patientNo}
+      ORDER BY mr.record_date DESC, mr.record_id DESC
+   </select>
+
+   <update id="completeCertificate">
+      UPDATE certificates
+      SET
+      status = #{status},
+      issued_By = #{issuedBy},
+      issued_At = #{issuedAt},
+      content = #{content}
+      WHERE
+      certificate_id = #{certificateId}
+   </update>
+
+   <resultMap id="medicalRecordSimpleResultMap"
+      type="com.hospital.vo.MedicalRecordVO">
+      <id property="recordId" column="record_id" />
+      <result property="reservationId" column="reservation_id" />
+      <result property="doctorId" column="doctor_id" />
+      <result property="diagnosis" column="diagnosis" />
+      <result property="treatment" column="treatment" />
+      <result property="prescription" column="prescription" />
+      <result property="recordDate" column="record_date" />
+      <result property="doctorName" column="doctor_name" />
+   </resultMap>
+
+   <select id="selectMedicalRecordById"
+      resultMap="medicalRecordResultMap" parameterType="int">
+      SELECT
+      mr.record_id AS mr_record_id,
+      mr.reservation_id AS mr_reservation_id,
+      mr.doctor_id AS mr_doctor_id,
+      mr.diagnosis AS mr_diagnosis,
+      mr.treatment AS mr_treatment,
+      mr.prescription AS mr_prescription,
+      mr.record_date AS mr_record_date,
+      mr.content AS mr_content,
+      mr.medication AS mr_medication,
+      u.name AS mr_doctor_name FROM
+      medical_records mr
+      LEFT JOIN
+      users u ON mr.doctor_id = u.user_id
+      WHERE
+      mr.record_id = #{recordId}
+   </select>
+
+
+   <select id="getCertificateHistoryCount" resultType="int">
+      SELECT COUNT(*)
+      FROM CERTIFICATES WHERE PATIENT_NO = #{patientNo}
+   </select>
+
+   <select id="getCertificateHistoryByPage"
+      resultType="com.hospital.vo.CertificateVO">
+      SELECT *
+      FROM (
+      SELECT
+      c.*,
+      ROW_NUMBER() OVER (ORDER BY c.ISSUED_AT DESC) as rn,
+      p.PATIENT_NAME AS "patientVO.patientName"
+      FROM CERTIFICATES c
+      JOIN patients p ON c.PATIENT_NO = p.PATIENT_NO
+      WHERE c.PATIENT_NO = #{patientNo}
+      )
+      WHERE rn BETWEEN #{startIndex} + 1 AND #{startIndex} + #{pageSize}
+   </select>
+
+
+   <select id="getPendingCertificatesByDept"
+      resultMap="certificateResultMap">
+      SELECT c.*, p.patient_name AS p_patient_name, mr.*, di.dept_id
+      FROM certificates c
+      JOIN patients p ON c.patient_no = p.patient_no
+      JOIN medical_records mr ON c.record_id = mr.record_id
+      JOIN doctor_info di ON mr.doctor_id = di.doctor_id
+      WHERE c.status IN ('접수', '발급완료')
+      AND di.dept_id = #{deptId}
+      ORDER BY c.issued_at DESC
+   </select>
+
+   <select id="getAllDoctorCertificates"
+      resultMap="certificateResultMap">
+      SELECT
+      *
+      FROM (
+      SELECT
+      a.*,
+      ROWNUM as rn
+      FROM (
+      SELECT
+      c.certificate_id,
+      c.patient_no,
+      c.type,
+      c.request_method,
+      c.status,
+      c.issued_at,
+      p.patient_name AS p_patient_name,
+      p.patient_rrn AS p_patient_rrn
+      FROM
+      certificates c
+      LEFT JOIN
+      patients p ON c.patient_no = p.patient_no
+      WHERE
+      c.status IN ('접수', '발급완료')
+      ORDER BY
+      CASE WHEN c.status = '발급완료' THEN 1 ELSE 0 END ASC,
+      c.issued_at DESC
+      ) a
+      )
+      WHERE rn BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+   </select>
+
+
+   <select id="getCertificateById"
+      resultType="com.hospital.vo.CertificateVO">
+      SELECT
+      certificate_id, patient_id, issued_at, type, request_method, diagnosis, notes,
+      status, created_at, updated_at
+      FROM certificates
+      WHERE certificate_id = #{certificateId}
+   </select>
+
+   <update id="updateCertificateContent"
+      parameterType="com.hospital.vo.CertificateVO">
+      UPDATE certificates
+      SET
+      content = #{content},
+      status = '발급완료',
+      issued_at = SYSDATE
+      WHERE certificate_id = #{certificateId}
+   </update>
+
+   <update id="updateCertificateStatus">
+      UPDATE certificates
+      SET
+      status = #{status}
+      WHERE certificate_id = #{certificateId}
+   </update>
+
+   <select id="getCertificateCount" resultType="int">
+      SELECT COUNT(*) FROM certificates
+   </select>
+
+   <!-- 페이징용: 전체 수 -->
+   <select id="getPendingCountByDept" resultType="int">
+      SELECT COUNT(*)
+      FROM certificates c
+      JOIN medical_records mr ON c.record_id = mr.record_id
+      JOIN doctor_info di ON mr.doctor_id = di.doctor_id
+      WHERE c.status IN ('접수', '발급완료')
+      AND di.dept_id = #{deptId}
+   </select>
+
+
+
+   <select id="getPendingCertificatesByDeptPaged"
+      resultMap="certificateResultMap">
+      SELECT *
+      FROM (
+      SELECT a.*, ROWNUM rn
+      FROM (
+      SELECT
+      c.certificate_id, c.patient_no, c.record_id, c.type, c.content, c.issued_at,
+      c.issued_by, c.status, c.method, c.request_method, c.viewed_at,
+      p.patient_name AS p_patient_name,
+      mr.record_id AS mr_record_id, mr.reservation_id AS mr_reservation_id,
+      mr.doctor_id AS mr_doctor_id, mr.diagnosis AS mr_diagnosis,
+      mr.treatment AS mr_treatment, mr.prescription AS mr_prescription,
+      mr.record_date AS mr_record_date, mr.content AS mr_content,
+      mr.medication AS mr_medication,
+      u.name AS mr_doctor_name,
+      di.dept_id
+      FROM certificates c
+      JOIN patients p ON c.patient_no = p.patient_no
+      JOIN medical_records mr ON c.record_id = mr.record_id
+      JOIN users u ON mr.doctor_id = u.user_id
+      JOIN doctor_info di ON mr.doctor_id = di.doctor_id
+      WHERE c.status IN ('접수', '발급완료')
+      AND di.dept_id = #{deptId}
+      ORDER BY
+      CASE WHEN c.status = '접수' THEN 0 ELSE 1 END ASC,
+      c.issued_at DESC
+      ) a
+      )
+      WHERE rn BETWEEN #{offset} + 1 AND #{end}
+   </select>
+
+
+
+</mapper>

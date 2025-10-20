@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.mapper.NoticeMapper">
+
+	<!-- 공지 등록 -->
+	<insert id="insertNotice"
+		parameterType="com.hospital.vo.NoticeVO">
+		INSERT INTO hospital_notices (
+		notice_id, title, content,
+		created_by, created_at
+		) VALUES (
+		SEQ_HOSPITAL_NOTICE_ID.NEXTVAL,
+		#{title}, #{content}, #{createdBy, jdbcType=VARCHAR}, SYSDATE
+		)
+	</insert>
+
+	<!-- 전체 목록 조회 -->
+	<select id="getAllNotices" resultType="com.hospital.vo.NoticeVO">
+		SELECT
+		notice_id,
+		title,
+		content,
+		created_by AS createdBy,
+		created_at,
+		'관리자' AS writer  <!-- writer 필드는 DB에 없고 NoticeVO에만 있으므로 하드코딩 -->
+		FROM hospital_notices
+		ORDER BY notice_id DESC
+	</select>
+
+	<!-- 상세 조회 -->
+	<select id="getNoticeById" parameterType="int"
+		resultType="com.hospital.vo.NoticeVO">
+		SELECT
+		notice_id,
+		title,
+		content,
+		created_by AS createdBy,
+		created_at,
+		'관리자' AS writer
+		FROM hospital_notices
+		WHERE notice_id = #{id}
+	</select>
+
+	<!-- 수정 -->
+	<update id="updateNotice"
+		parameterType="com.hospital.vo.NoticeVO">
+		UPDATE hospital_notices
+		SET title = #{title},
+		content =
+		#{content}
+		WHERE notice_id = #{noticeId}
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteNotice" parameterType="int">
+		DELETE FROM
+		hospital_notices
+		WHERE notice_id = #{id}
+	</delete>
+
+	<resultMap id="HospitalNoticeMap"
+		type="com.hospital.vo.NoticeVO">
+		<id property="noticeId" column="NOTICE_ID" />
+		<result property="title" column="TITLE" />
+		<result property="content" column="CONTENT" />
+		<result property="createdAt" column="CREATED_AT" />
+		<result property="updatedAt" column="UPDATED_AT" />
+		<result property="createdBy" column="CREATED_BY" />
+	</resultMap>
+
+	<!-- UPDATED_AT, CREATED_AT 중 더 최근값으로 정렬 (NULL 안전) -->
+	<select id="selectLatest" parameterType="int"
+		resultMap="HospitalNoticeMap">
+    <![CDATA[
+      SELECT *
+      FROM (
+        SELECT NOTICE_ID, TITLE, CONTENT, CREATED_AT, UPDATED_AT, CREATED_BY
+        FROM HOSPITAL_NOTICES
+        ORDER BY GREATEST(NVL(UPDATED_AT, TO_DATE('1900-01-01','YYYY-MM-DD')), CREATED_AT) DESC
+      )
+      WHERE ROWNUM <= #{limit}
+    ]]>
+	</select>
+
+<select id="findByTitleContaining" parameterType="String" resultType="com.hospital.vo.NoticeVO">
+    SELECT
+        notice_id,
+        title,
+        content,
+        created_by AS createdBy,
+        created_at,
+        '관리자' AS writer
+    FROM hospital_notices
+    WHERE
+        title LIKE '%' || #{keyword} || '%'
+    ORDER BY
+        notice_id DESC
+</select>
+
+<!-- 통합검색용 공지사항 키워드 검색 -->
+	  <select id="searchNoticesByKeyword" resultType="com.hospital.vo.NoticeVO">
+        SELECT 
+            notice_id AS noticeId,
+            title,
+            content,
+            created_at AS created_at
+        FROM hospital_notices  <!-- 테이블 이름이 'notice'인지 확인 -->
+        WHERE title LIKE '%' || #{keyword} || '%' OR content LIKE '%' || #{keyword} || '%'
+    </select>
+
+</mapper>
+

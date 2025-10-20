@@ -1,0 +1,125 @@
+/* mypage.css */
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #eef3f9;
+}
+
+.mypage-wrapper {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 50px 60px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  color: #2b2b2b;
+}
+
+.mypage-wrapper h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: #004080;
+  position: relative;
+  padding-left: 12px;
+}
+.menu-group-title {
+  grid-column: span 2;        /* 양쪽 칸 전체 차지 */
+  font-size: 18px;
+  font-weight: 600;
+  margin: 30px 0 10px;
+  color: #005288;
+  border-left: 4px solid #007bff;
+  padding: 5px 10px;
+  background-color: #f0f6fc;
+  border-radius: 6px;
+}
+
+
+.mypage-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.mypage-menu li a {
+  display: block;
+  padding: 16px 22px;
+  background-color: #f8faff;
+  border: 1px solid #dde7f3;
+  border-radius: 12px;
+  color: #333;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.mypage-menu li a:hover {
+  background-color: #e1f0ff;
+  border-color: #b3d8ff;
+  color: #007bff;
+}
+
+/* 상담 내역 테이블 */
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.styled-table th, .styled-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.styled-table th {
+  background-color: #f0f6fc;
+  color: #004080;
+  font-weight: 600;
+}
+
+.styled-table tr:nth-child(even) {
+  background-color: #fafcff;
+}
+
+.styled-table tr:hover {
+  background-color: #eaf4ff;
+}
+
+.back-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 15px;
+  color: #004080;
+  background-color: #e6f0ff;
+  border: 1px solid #b3d8ff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: #cce4ff;
+  color: #003366;
+}
+
+.btn-group {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.btn-group .back-btn {
+  margin-left: 8px;
+}
+
+

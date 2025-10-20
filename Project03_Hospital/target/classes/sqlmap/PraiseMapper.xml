@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mapper.PraiseMapper">
+
+<select id="selectPraiseList" resultType="com.hospital.vo.PraiseVO">
+  SELECT * FROM (
+    SELECT ROWNUM AS row_num, r.* FROM (
+      SELECT
+        p.praise_id as praiseId,
+        p.title,
+        p.created_at as createdAt,
+        p.view_count as viewCount,
+        pa.patient_name as patientName
+      FROM
+        praise_relay p
+      JOIN
+        patients pa ON p.patient_user_id = pa.patient_user_id
+      ORDER BY
+        p.praise_id DESC
+    ) r
+    WHERE ROWNUM &lt;= #{endRow}
+  )
+  WHERE row_num &gt;= #{startRow}
+</select>
+
+    <select id="selectPraiseDetail" parameterType="int" resultType="com.hospital.vo.PraiseVO">
+    SELECT
+        p.praise_id as praiseId,
+        p.title,
+        p.content,
+        p.created_at as createdAt,
+        p.view_count as viewCount,
+        p.patient_user_id as patientUserId,  pa.patient_name as patientName
+    FROM
+        praise_relay p
+    JOIN
+        patients pa ON p.patient_user_id = pa.patient_user_id
+    WHERE
+        p.praise_id = #{praiseId}
+</select>
+
+    <update id="updateViewCount">
+        UPDATE
+            praise_relay
+        SET
+            view_count = view_count + 1
+        WHERE
+            praise_id = #{praiseId}
+    </update>
+    
+  <insert id="insertPraise" parameterType="com.hospital.vo.PraiseVO">
+    <selectKey keyProperty="praiseId" resultType="java.lang.Integer" order="BEFORE">
+        SELECT seq_praise_id.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO praise_relay (
+        praise_id,
+        title,
+        content,
+        patient_user_id,
+        created_at
+    ) VALUES (
+        #{praiseId},
+        #{title},
+        #{content},
+        #{patientUserId},
+        SYSDATE
+    )
+</insert>
+
+    <update id="updatePraise" parameterType="com.hospital.vo.PraiseVO">
+        UPDATE praise_relay
+        SET
+            title = #{title},
+            content = #{content}
+        WHERE
+            praise_id = #{praiseId}
+    </update>
+
+    <delete id="deletePraise" parameterType="int">
+        DELETE FROM praise_relay
+        WHERE praise_id = #{praiseId}
+    </delete>
+    
+    
+    <select id="countPraise" resultType="int">
+    SELECT COUNT(*) FROM praise_relay
+</select>
+
+
+</mapper>
+
+

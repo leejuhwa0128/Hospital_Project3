@@ -1,0 +1,83 @@
+@charset "UTF-8";
+
+/* ✅ 외부 박스는 넓고 크게 */
+.direction-wrapper {
+  max-width: 2400px; /* 또는 1400px */
+  margin: 200px auto;
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.direction-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 10px 40px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+/* ✅ 제목 */
+.direction-box h2 {
+  margin-bottom: 30px;
+  font-size: 30px;
+  color: #1e3a8a;
+}
+
+/* ✅ 카드 전체 레이아웃 (3열) */
+.facility-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ✅ 개별 카드 */
+.facility-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.facility-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.facility-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.facility-type {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.facility-card h4 {
+  font-size: 18px;
+  margin: 0 0 8px;
+  color: #0f172a;
+}
+
+.facility-card p {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.5;
+}
+
+/* ✅ 반응형 */
+@media (max-width: 1024px) {
+  .facility-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .facility-grid {
+    grid-template-columns: 1fr;
+  }
+}

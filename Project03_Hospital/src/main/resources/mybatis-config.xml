@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+<!-- applicationContext.xml 설정으로 대체  
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+-->
+<!-- applicationContext.xml 설정으로 대체 
+	<typeAliases>
+		<typeAlias type="com.spring.biz.board.BoardVO" alias="boardVO"/>
+		<typeAlias type="com.spring.biz.user.UserVO" alias="userVO"/>
+	</typeAliases>
+-->	
+
+<!-- applicationContext.xml 에서 dataSource 설정 사용으로 대체
+	<environments default="development">
+	  <environment id="development">
+	    <transactionManager type="JDBC"/>
+	    <dataSource type="POOLED">
+	      <property name="driver" value="oracle.jdbc.OracleDriver"/>
+	      <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+	      <property name="username" value="MYSTUDY"/>
+	      <property name="password" value="mystudypw"/>
+	    </dataSource>
+	  </environment>
+	</environments>
+-->
+
+<!--  applicationContext.xml 에서 mapperLocations 설정으로 대체
+	<mappers>
+	  <mapper resource="mappings/board/BoardMapper.xml"/>
+	  <mapper resource="mappings/user/UserMapper.xml"/>
+	</mappers>
+-->
+  
+</configuration>
+
+
+
+
+

@@ -1,0 +1,91 @@
+@import url('/css/common.css');
+
+/* 🔷 공통 카드 박스 스타일 (미션/비전과 통일) */
+.section-box.greeting-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 1380px;
+  width: 95vw;
+  margin: 40px auto;
+  padding: 60px 80px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+/* 🔷 내부 flex 영역 */
+.greeting-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 60px;
+}
+
+/* 🔷 왼쪽 텍스트 영역 */
+.greeting-text {
+  flex: 1.2;
+}
+
+.greeting-text h2 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: #0a2a5a;
+}
+
+.greeting-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.greeting-text p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 15px;
+}
+
+/* 🔷 서명 스타일 */
+.signature {
+  font-family: 'Nanum Brush Script', cursive;
+  font-size: 40px;          /* ✅ 기존보다 더 크게 */
+  font-weight: bold;        /* ✅ 굵게 강조 */
+  margin-top: 40px;
+  color: #0a2a5a;           /* ✅ 병원 메인 컬러와 맞춤 */
+  text-align: left;        /* ✅ 오른쪽 정렬 */
+}
+
+/* 🔷 오른쪽 이미지 영역 */
+.greeting-image {
+  flex: 1;
+  max-width: 380px;
+}
+
+.greeting-image img {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 🔷 반응형 대응 */
+@media (max-width: 768px) {
+  .greeting-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .greeting-image {
+    max-width: 90%;
+    margin-top: 30px;
+  }
+
+  .greeting-image img {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.DoctorScheduleDAO">
+
+	<select id="getSchedulesByDoctorId"
+		resultType="com.hospital.vo.DoctorScheduleVO">
+		SELECT * FROM doctor_schedules WHERE doctor_id =
+		#{doctorId} ORDER BY schedule_date
+	</select>
+
+	<select id="getScheduleById"
+		resultType="com.hospital.vo.DoctorScheduleVO">
+		SELECT
+		schedule_id AS scheduleId,
+		doctor_id AS doctorId,
+		schedule_date AS scheduleDate,
+		time_slot AS timeSlot,
+		schedule_time AS
+		scheduleTime,
+		note AS note,
+		created_at AS createdAt
+		FROM doctor_schedules
+		WHERE schedule_id = #{scheduleId}
+	</select>
+
+	<update id="updateSchedule"
+		parameterType="com.hospital.vo.DoctorScheduleVO">
+		UPDATE doctor_schedules
+		SET schedule_date =
+		#{scheduleDate},
+		schedule_time = #{scheduleTime},
+		note = #{note}
+		WHERE
+		schedule_id = #{scheduleId}
+	</update>
+
+	<insert id="insertSchedule"
+		parameterType="com.hospital.vo.DoctorScheduleVO">
+		INSERT INTO doctor_schedules (
+		schedule_id, doctor_id,
+		schedule_date,
+		time_slot, schedule_time, note, created_at
+		) VALUES (
+		doctor_schedule_seq.NEXTVAL,
+		#{doctorId},
+		#{scheduleDate},
+		#{timeSlot},
+		#{scheduleTime},
+		#{note},        <!-- JS에서 선택된 "외래진료/강의/학회/휴가/기타" 값이 들어옴 -->
+		SYSDATE
+		)
+	</insert>
+
+	<select id="selectByDoctorAndDate"
+		resultType="com.hospital.vo.DoctorScheduleVO">
+		SELECT
+		schedule_id AS scheduleId,
+		doctor_id AS doctorId,
+		schedule_date AS
+		scheduleDate,
+		time_slot AS timeSlot,
+		schedule_time AS
+		scheduleTime,
+		note
+		FROM doctor_schedules
+		WHERE doctor_id = #{doctorId}
+		AND TRUNC(schedule_date) = TO_DATE(#{date}, 'YYYY-MM-DD')
+		ORDER BY
+		schedule_time
+	</select>
+
+	<select id="countActiveReservationsBySchedule"
+		parameterType="long" resultType="int">
+		SELECT COUNT(1)
+		FROM reservations
+		WHERE schedule_id = #{scheduleId}
+		AND status IN ('대기','확정')
+	</select>
+
+	<delete id="deleteSchedule" parameterType="long">
+		DELETE FROM
+		doctor_schedules
+		WHERE schedule_id = #{scheduleId}
+	</delete>
+
+	<update id="cancelReservationsBySchedule" parameterType="long">
+		UPDATE
+		reservations
+		SET status = '취소'
+		WHERE schedule_id = #{scheduleId}
+		AND
+		status IN ('대기','확정')
+	</update>
+
+	<update id="nullifyReservationsBySchedule" parameterType="long">
+		UPDATE
+		reservations
+		SET schedule_id = NULL
+		WHERE schedule_id = #{scheduleId}
+	</update>
+
+
+</mapper>
+

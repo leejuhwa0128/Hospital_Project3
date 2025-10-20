@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ✅ 네임스페이스 수정 완료 -->
+<mapper namespace="com.hospital.dao.ReferralDAO">
+
+	<select id="selectNoticesForAll"
+		resultType="com.hospital.vo.ReferralNoticeVO">
+		SELECT * FROM REFERRAL_NOTICES
+		WHERE TARGET_ROLE = 'all'
+		ORDER BY NOTICE_ID DESC
+	</select>
+
+	<select id="selectNoticesForRole"
+		resultType="com.hospital.vo.ReferralNoticeVO">
+		SELECT * FROM REFERRAL_NOTICES
+		WHERE ',' || TARGET_ROLE ||
+		',' LIKE '%,' || #{role} || ',%'
+		OR TARGET_ROLE = 'all'
+		ORDER BY
+		NOTICE_ID DESC
+	</select>
+
+	<select id="selectAllPartnerHospitals"
+		resultType="com.hospital.vo.PartnerHospitalVO">
+		SELECT * FROM partner_hospitals
+	</select>
+
+	<select id="getAllPartnerHospitals"
+		resultType="com.hospital.vo.PartnerHospitalVO">
+		SELECT * FROM partner_hospitals
+	</select>
+
+	<select id="getAllReferrals"
+		resultType="com.hospital.vo.ReferralRequestVO">
+		SELECT r.*, u.name AS user_name, h.name AS hospital_name
+		FROM referral_requests r
+		LEFT JOIN users u ON r.user_id = u.user_id
+		LEFT JOIN partner_hospitals h ON r.hospital_id = h.hospital_id
+		ORDER BY
+		r.created_at DESC
+	</select>
+
+	<select id="getReferralsByStatus"
+		resultType="com.hospital.vo.ReferralRequestVO">
+		SELECT * FROM referral_requests
+		WHERE status = #{status}
+		ORDER BY created_at DESC
+	</select>
+
+	<select id="getReferralById" parameterType="int"
+		resultType="com.hospital.vo.ReferralRequestVO">
+		SELECT * FROM referral_requests
+		WHERE request_id =
+		#{requestId}
+	</select>
+
+	<update id="updateReferralStatus">
+		UPDATE referral_requests
+		SET status = #{status}
+		WHERE
+		request_id = #{requestId}
+	</update>
+
+	<insert id="insertReferral"
+		parameterType="com.hospital.vo.ReferralRequestVO">
+		INSERT INTO referral_requests (
+		request_id, user_id,
+		hospital_id, patient_name,
+		contact, department,
+		hope_date, doctor_id,
+		symptoms, reason,
+		status, created_at
+		) VALUES (
+		SEQ_REQUEST_ID.NEXTVAL,
+		#{userId},
+		#{hospitalId}, #{patientName},
+		#{contact}, #{department},
+		#{hopeDate}, #{doctorId},
+		#{symptoms}, #{reason},
+		#{status}, SYSDATE
+		)
+	</insert>
+
+	<select id="getReferralsByUserId" resultType="ReferralRequestVO">
+		SELECT
+		r.*,
+		u.name AS user_name,
+		h.name AS hospital_name,
+		d.name AS department_name
+		FROM referral_requests r
+		LEFT JOIN users u ON r.user_id = u.user_id
+		LEFT JOIN partner_hospitals h ON r.hospital_id = h.hospital_id
+		LEFT JOIN departments d ON r.department = d.dept_id
+		WHERE r.user_id = #{userId}
+		ORDER BY r.created_at DESC
+	</select>
+
+	<select id="getReferralsSorted"
+		resultType="com.hospital.vo.ReferralRequestVO">
+		SELECT
+		r.*,
+		u.name AS user_name,
+		h.name AS hospital_name,
+		d.name AS
+		department_name
+		FROM referral_requests r
+		LEFT JOIN users u ON r.user_id
+		= u.user_id
+		LEFT JOIN partner_hospitals h ON r.hospital_id =
+		h.hospital_id
+		LEFT JOIN departments d ON r.department = d.dept_id
+		<where>
+			<if test="status != null and status != ''">
+				r.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="sort == 'hope_date'">
+				ORDER BY r.hope_date ${order}
+			</when>
+			<otherwise>
+				ORDER BY r.created_at ${order}
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="getReferralsByKeyword" parameterType="String"
+		resultType="com.hospital.vo.ReferralRequestVO">
+		SELECT r.*, u.name AS user_name, h.name AS hospital_name
+		FROM referral_requests r
+		JOIN users u ON r.user_id = u.user_id
+		JOIN
+		partner_hospitals h ON r.hospital_id = h.hospital_id
+		WHERE
+		LOWER(u.user_id) LIKE '%' || LOWER(#{keyword}) || '%'
+		OR LOWER(u.name)
+		LIKE '%' || LOWER(#{keyword}) || '%'
+		OR LOWER(h.name) LIKE '%' ||
+		LOWER(#{keyword}) || '%'
+		ORDER BY r.created_at DESC
+	</select>
+
+	<insert id="insertCoopUser"
+		parameterType="com.hospital.vo.UserVO">
+		INSERT INTO users (
+		user_id, password, name, rrn,
+		hospital_id, phone, email, role, gender, dept_id
+		) VALUES (
+		#{userId},
+		#{password}, #{name}, #{rrn},
+		#{hospitalId}, #{phone}, #{email},
+		#{role}, #{gender}, '000'
+		)
+	</insert>
+
+
+	<select id="countUserId" resultType="int" parameterType="String">
+		SELECT
+		COUNT(*) FROM users WHERE user_id = #{userId}
+	</select>
+
+
+	<resultMap id="NoticeMap"
+		type="com.hospital.vo.ReferralNoticeVO">
+		<id property="noticeId" column="NOTICE_ID" />
+		<result property="title" column="TITLE" />
+		<result property="content" column="CONTENT" />
+		<result property="createdAt" column="CREATED_AT" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="targetRole" column="TARGET_ROLE" />
+	</resultMap>
+	<select id="selectLatestForAll" parameterType="int"
+		resultType="com.hospital.vo.ReferralNoticeVO">
+  <![CDATA[
+    SELECT *
+    FROM (
+      SELECT NOTICE_ID, TITLE, CONTENT, CREATED_AT, CREATED_BY, TARGET_ROLE
+      FROM REFERRAL_NOTICES
+      WHERE NVL(UPPER(TRIM(TARGET_ROLE)),'ALL') = 'ALL'
+      ORDER BY CREATED_AT DESC
+    )
+    WHERE ROWNUM <= #{limit}
+  ]]>
+	</select>
+
+	<select id="selectPartnerLocations"
+		resultType="com.hospital.vo.PartnerHospitalVO">
+		SELECT
+		HOSPITAL_ID AS id,
+		NAME AS name,
+		REGION AS region,
+		ADDRESS AS address,
+		PHONE AS phone,
+		WEBSITE AS website,
+		LAT AS lat,
+		LNG AS
+		lng,
+		CREATED_AT AS createdAt
+		FROM PARTNER_HOSPITALS
+		ORDER BY NAME
+	</select>
+
+
+</mapper>

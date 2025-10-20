@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.DoctorDAO">
+
+	<!-- 전체 의사 목록 -->
+	<select id="getAllDoctors" resultType="com.hospital.vo.DoctorVO">
+		SELECT d.*, u.name,
+		dept.name AS deptName
+		FROM doctor_info d
+		JOIN users u ON d.doctor_id =
+		u.user_id
+		JOIN departments dept ON d.dept_id = dept.dept_id
+		ORDER BY
+		d.created_at DESC
+	</select>
+
+	<!-- 과별 의사 목록 -->
+	<select id="getDoctorsByDept" parameterType="string"
+		resultType="com.hospital.vo.DoctorVO">
+		SELECT d.doctor_id,
+		u.name,
+		d.dept_id,
+		dept.name AS deptName
+		FROM doctor_info d
+		JOIN users u ON d.doctor_id = u.user_id
+		JOIN
+		departments dept ON d.dept_id = dept.dept_id
+		WHERE d.dept_id =
+		#{deptId}
+	</select>
+
+
+	<!-- 검색 -->
+	<select id="searchDoctors" parameterType="string"
+		resultType="com.hospital.vo.DoctorVO">
+		SELECT d.*, u.name, dept.name AS deptName
+		FROM doctor_info d
+		JOIN users u ON d.doctor_id = u.user_id
+		JOIN departments dept ON
+		d.dept_id = dept.dept_id
+		WHERE u.name LIKE '%' || #{keyword} || '%'
+		OR
+		d.specialty LIKE '%' || #{keyword} || '%'
+		ORDER BY d.created_at DESC
+	</select>
+
+	<!-- 의사 상세조회 -->
+	<select id="getDoctorById" parameterType="string"
+		resultType="com.hospital.vo.DoctorVO">
+		SELECT d.*, u.name, dept.name AS deptName
+		FROM doctor_info d
+		JOIN users u ON d.doctor_id = u.user_id
+		JOIN departments dept ON
+		d.dept_id = dept.dept_id
+		WHERE d.doctor_id = #{doctorId}
+	</select>
+
+	<!-- 의사 정보 업데이트 -->
+	<update id="updateDoctor"
+		parameterType="com.hospital.vo.DoctorVO">
+		UPDATE doctor_info
+		SET dept_id = #{deptId},
+		specialty =
+		#{specialty},
+		bio = #{bio},
+		profile_image_path = #{profileImagePath}
+		WHERE doctor_id = #{doctorId}
+	</update>
+
+	<!-- 진료과 변경만 업데이트 -->
+	<update id="updateDoctorDept"
+		parameterType="com.hospital.vo.DoctorVO">
+		UPDATE doctor_info
+		SET dept_id = #{deptId}
+		WHERE doctor_id
+		= #{doctorId}
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteDoctor" parameterType="string">
+		DELETE FROM doctor_info
+		WHERE doctor_id = #{doctorId}
+	</delete>
+
+	<!-- 전체 진료과 목록 -->
+	<select id="getAllDepartments"
+		resultType="com.hospital.vo.DepartmentVO">
+		SELECT * FROM departments ORDER BY dept_id
+	</select>
+
+	<!-- 스케줄 조회 -->
+	<select id="getSchedulesByDoctorId" parameterType="string"
+		resultType="com.hospital.vo.DoctorScheduleVO">
+		SELECT * FROM doctor_schedules
+		WHERE doctor_id = #{doctorId}
+		ORDER BY schedule_date, time_slot
+	</select>
+
+	<!-- 진료 기록 조회 -->
+	<select id="getRecordsByDoctorId" parameterType="string"
+		resultType="com.hospital.vo.MedicalRecordVO">
+		SELECT mr.*, p.patient_name AS patientName
+		FROM
+		medical_records mr
+		JOIN reservations r ON mr.reservation_id =
+		r.reservation_id
+		JOIN patients p ON r.patient_no = p.patient_no
+		WHERE
+		mr.doctor_id = #{doctorId}
+		ORDER BY mr.record_date DESC
+	</select>
+
+	<!-- 예약 내역 조회 -->
+	<select id="getReservationsByDoctorId" parameterType="string"
+		resultType="com.hospital.vo.ReservationVO">
+		SELECT r.*, p.patient_name AS patientName
+		FROM reservations
+		r
+		JOIN patients p ON r.patient_no = p.patient_no
+		WHERE r.doctor_id =
+		#{doctorId}
+		ORDER BY r.reservation_date DESC
+	</select>
+
+	<select id="countDoctors" resultType="int">
+		SELECT COUNT(*) FROM users
+		WHERE role = 'doctor'
+	</select>
+
+
+
+
+
+
+</mapper>

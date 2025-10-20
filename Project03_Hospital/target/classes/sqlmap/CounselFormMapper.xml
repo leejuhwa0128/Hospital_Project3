@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.mapper.CounselFormMapper">
+
+	<!-- 상담 등록 -->
+	<insert id="insertCounsel"
+		parameterType="com.hospital.vo.CounselFormVO">
+		INSERT INTO reservation_counsels (
+		counsel_id,
+		patient_name, email, phone, subject, message, status, created_at
+		)
+		VALUES (
+		seq_counsel_id.NEXTVAL,
+		#{patientName},
+		#{email},
+		#{phone},
+		#{subject},
+		#{message},
+		'대기',
+		SYSDATE
+		)
+	</insert>
+
+	<select id="getAllCounsel"
+		resultType="com.hospital.vo.CounselFormVO">
+		SELECT *
+		FROM reservation_counsels
+		ORDER BY created_at DESC
+	</select>
+
+	<select id="getCounselById" parameterType="int"
+		resultType="com.hospital.vo.CounselFormVO">
+		SELECT *
+		FROM reservation_counsels
+		WHERE counsel_id =
+		#{counselId}
+	</select>
+
+
+	<!-- 상담 상태 변경 -->
+	<update id="updateStatus">
+		UPDATE reservation_counsels
+		SET status = #{status}
+		WHERE counsel_id = #{counselId}
+	</update>
+
+	<!-- 빠른예약 목록만 조회 -->
+	<select id="getFastReservations"
+		resultType="com.hospital.vo.CounselFormVO">
+		SELECT *
+		FROM reservation_counsels
+		WHERE subject = '빠른예약'
+		ORDER BY created_at DESC
+	</select>
+
+	<select id="selectByEmail" parameterType="String"
+		resultType="com.hospital.vo.CounselFormVO">
+		SELECT * FROM reservation_counsels
+		WHERE email = #{email}
+		ORDER BY created_at DESC
+	</select>
+
+
+
+</mapper>

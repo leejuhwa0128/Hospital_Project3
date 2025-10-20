@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.UserActivityLogDAO">
+
+	<insert id="insertLog"
+		parameterType="com.hospital.vo.UserActivityLogVO">
+		INSERT INTO USER_ACTIVITY_LOGS (
+		LOG_ID, USER_ID, ACTION, TARGET_TABLE, TARGET_ID, TIMESTAMP, USER_TYPE
+		) VALUES (
+		SEQ_USER_LOG_ID.NEXTVAL,
+		#{userId},
+		#{action},
+		#{targetTable},
+		#{targetId},
+		SYSDATE,
+		#{userType}
+		)
+	</insert>
+
+	<select id="getAllLogs"
+		resultType="com.hospital.vo.UserActivityLogVO">
+		SELECT LOG_ID, USER_ID, ACTION, TARGET_TABLE, TARGET_ID,
+		TIMESTAMP,
+		USER_TYPE
+		FROM USER_ACTIVITY_LOGS
+		ORDER BY LOG_ID DESC
+	</select>
+
+</mapper>

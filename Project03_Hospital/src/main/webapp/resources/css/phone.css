@@ -1,0 +1,131 @@
+@charset "UTF-8";
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f9fbfd;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #1e293b;
+}
+
+.direction-wrapper {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.direction-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px 40px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+}
+
+.phone-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.phone-card {
+  flex: 1 1 45%;
+  background: #ffffff; /* ✅ 흰색 배경으로 변경 */
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid #e2e8f0; /* 연한 테두리 유지 */
+  transition: 0.2s;
+  min-width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03); /* 부드러운 그림자 */
+}
+.phone-card:hover {
+  background: #e0f2fe;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.phone-card .label {
+  color: gray;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.phone-card .number {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+/* 📌 모달 팝업 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(30, 41, 59, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.modal-content h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #1e3a8a;
+}
+
+.modal-number {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+.modal-content p {
+  margin: 5px 0;
+  font-size: 15px;
+  color: #334155;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .phone-grid {
+    flex-direction: column;
+  }
+
+  .phone-card {
+    flex: 1 1 100%;
+  }
+}

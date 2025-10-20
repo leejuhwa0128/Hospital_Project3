@@ -1,0 +1,179 @@
+@charset "UTF-8";
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f9fbfd;
+    padding: 40px;
+}
+
+.main-container {
+    display: flex;
+}
+
+/* ✅ 박스 스타일이 적용될 메인 컨텐츠 영역 */
+.content-area {
+    flex: 1;
+    background: #fff;
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-left: 30px;
+    margin-top: 40px;
+}
+
+/* ✅ 페이지 제목 스타일 (이모지 포함) */
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e3f2fd; /* 파란색 구분선 */
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+h2 .emoji {
+    margin-right: 10px;
+    font-size: 28px;
+}
+
+/* ✅ 고객의 소리 설명 문구 */
+.feedback-description {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+.feedback-description p {
+    margin: 0;
+}
+
+/* ✅ 버튼 그룹 */
+.btn-group {
+    text-align: right;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-group a {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    border: 1px solid #ccc;
+    margin-left: 5px;
+}
+
+.btn-group a.back-btn {
+    background-color: #f8f9fa;
+    color: #555;
+    border-color: #ddd;
+}
+
+.btn-group a.back-btn:hover {
+    background-color: #e9ecef;
+}
+
+.btn-group a[href*="write.do"] {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.btn-group a[href*="write.do"]:hover {
+    background-color: #0056b3;
+}
+
+/* ✅ 모던한 테이블 스타일 */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    border-top: 2px solid #e0e0e0; /* 상단 테두리 유지 */
+}
+
+.styled-table thead tr {
+    background-color: #e3f2fd; /* 파란색 배경으로 통일 */
+    color: #34495e;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.styled-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f5faff;
+}
+
+.styled-table td a {
+    text-decoration: none;
+    color: #34495e;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.styled-table td a:hover {
+    color: #007bff;
+}
+
+/* 답변 상태 배지 */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.status-badge.complete {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.pending {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* ✅ 페이지네이션 스타일 */
+.pagination {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    text-decoration: none;
+    color: #555;
+    border-radius: 4px;
+    margin: 0 4px;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+
+.pagination a.active,
+.pagination a:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}

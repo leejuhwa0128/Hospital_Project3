@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.Referral2DAO">
+
+	<select id="convertToReferralRequest" parameterType="int"
+		resultType="com.hospital.vo.ReferralRequestVO">
+		SELECT
+		p.patient_name AS patientName,
+		p.patient_rrn AS rrn,
+		p.patient_phone AS contact
+		FROM medical_records mr
+		JOIN reservations r ON mr.reservation_id = r.reservation_id
+		JOIN patients p ON r.patient_no = p.patient_no
+		WHERE mr.record_id = #{recordId}
+	</select>
+
+	<select id="getAllPartnerHospitals"
+		resultType="com.hospital.vo.PartnerHospitalVO">
+		SELECT * FROM partner_hospitals ORDER BY name
+	</select>
+
+<insert id="insertReferralRequest"
+    parameterType="com.hospital.vo.ReferralRequestVO">
+    INSERT INTO referral_requests (
+        request_id, user_id, patient_name, rrn, contact,
+        department, doctor_id, hope_date, reason, symptoms,
+        hospital_id, status, created_at, record_id
+    ) VALUES (
+        seq_request_id.NEXTVAL, #{userId}, #{patientName}, #{rrn}, #{contact},
+        #{departmentId}, #{doctorId}, #{hopeDate}, #{reason}, #{symptoms},
+        #{hospitalId}, #{status}, SYSDATE, #{recordId}
+    )
+</insert>
+
+	<select id="getDoctorsByHospital" parameterType="int"
+		resultType="com.hospital.vo.UserVO">
+		SELECT * FROM users
+		WHERE role = 'coop'
+		AND hospital_id = #{hospitalId}
+		ORDER BY name
+	</select>
+
+	<select id="getReceivedReferrals" resultMap="referralResultMap">
+		SELECT
+		rr.request_id,
+		rr.user_id,
+		u.name AS user_name,
+		rr.patient_name,
+		rr.rrn,
+		rr.contact,
+		rr.department,
+		rr.doctor_id,
+		d.name AS department_name,
+		doc.name AS doctor_name,
+		rr.hope_date,
+		rr.reason,
+		rr.symptoms,
+		rr.hospital_id,
+		ph.name AS hospital_name,
+		rr.status,
+		rr.created_at,
+		CASE
+		WHEN rpl.reply_id IS NOT NULL THEN 1
+		ELSE 0
+		END AS reply_exists
+		FROM referral_requests rr
+		JOIN users u ON rr.user_id = u.user_id
+		JOIN departments d ON rr.department = d.dept_id
+		JOIN users doc ON rr.doctor_id = doc.user_id
+		JOIN partner_hospitals ph ON rr.hospital_id = ph.hospital_id
+		LEFT JOIN referral_replies rpl ON rr.request_id = rpl.request_id
+		WHERE rr.hospital_id = #{hospitalId}
+		ORDER BY rr.created_at DESC
+	</select>
+
+	<resultMap id="referralResultMap"
+		type="com.hospital.vo.ReferralRequestVO">
+		<id property="requestId" column="request_id" />
+		<result property="doctorId" column="doctor_id" />
+		<result property="userId" column="user_id" />
+		<result property="hospitalId" column="hospital_id" />
+		<result property="status" column="status" />
+		<result property="createdAt" column="created_at" />
+
+
+		<result property="record_id" column="record_id" />
+
+		<!-- JOIN 결과 필드들 -->
+		<result property="departmentName" column="department_name" />
+		<result property="doctorName" column="doctor_name" />
+		<result property="userName" column="user_name" />
+		<result property="hospitalName" column="hospital_name" />
+		<result property="replyExists" column="reply_exists" />
+	</resultMap>
+
+
+	<select id="getVisibleReferrals" resultMap="referralResultMap">
+		SELECT
+		rr.request_id,
+		rr.user_id,
+		u.name AS user_name,
+		rr.patient_name,
+		rr.rrn,
+		rr.contact,
+		rr.department,
+		rr.doctor_id,
+		d.name AS department_name,
+		doc.name AS doctor_name,
+		rr.hope_date,
+		rr.reason,
+		rr.symptoms,
+		rr.hospital_id,
+		ph.name AS hospital_name,
+		rr.status,
+		rr.created_at,
+		CASE
+		WHEN rpl.reply_id IS NOT NULL THEN 1
+		ELSE 0
+		END AS reply_exists
+		FROM referral_requests rr
+		LEFT JOIN users u ON rr.user_id = u.user_id
+		LEFT JOIN departments d ON rr.department = d.dept_id
+		LEFT JOIN users doc ON rr.doctor_id = doc.user_id
+		LEFT JOIN partner_hospitals ph ON rr.hospital_id = ph.hospital_id
+		LEFT JOIN referral_replies rpl ON rr.request_id = rpl.request_id
+		WHERE rr.hospital_id = #{hospitalId}
+		OR rr.user_id = #{userId}
+		OR rr.doctor_id = #{userId}
+		ORDER BY rr.created_at DESC
+	</select>
+
+	<select id="getReferralRequestById" parameterType="int"
+		resultMap="referralResultMap">
+		SELECT
+		rr.request_id,
+		rr.user_id,
+		u.name AS user_name,
+		rr.patient_name,
+		rr.rrn,
+		rr.contact,
+		rr.department,
+		rr.doctor_id,
+		d.name AS department_name,
+		doc.name AS doctor_name, -- 👈 이거 꼭 있어야 함!
+		rr.hope_date,
+		rr.reason,
+		rr.symptoms,
+		rr.hospital_id,
+		ph.name AS hospital_name,
+		rr.status,
+		rr.created_at,
+		CASE
+		WHEN rpl.reply_id IS NOT NULL THEN 1
+		ELSE 0
+		END AS reply_exists
+		FROM referral_requests rr
+		JOIN users u ON rr.user_id = u.user_id
+		JOIN departments d ON rr.department = d.dept_id
+		JOIN users doc ON rr.doctor_id = doc.user_id -- 👈 이 join도 필수!
+		JOIN partner_hospitals ph ON rr.hospital_id = ph.hospital_id
+		LEFT JOIN referral_replies rpl ON rr.request_id = rpl.request_id
+		WHERE rr.request_id = #{requestId}
+	</select>
+
+
+
+	<select id="getReplyByRequestId" parameterType="int"
+		resultType="com.hospital.vo.ReferralReplyVO">
+		SELECT
+		reply_id,
+		request_id,
+		responder_name,
+		reply_content,
+		reply_date,
+		status,
+		hospital_id,
+		attachment_path
+		FROM referral_replies
+		WHERE request_id = #{requestId}
+	</select>
+
+	<select id="getReferralCommentsByRequestId" parameterType="int"
+		resultType="com.hospital.vo.ReferralCommentVO">
+		SELECT
+		comment_id,
+		request_id,
+		doctor_id,
+		comment_text,
+		comment_at
+		FROM referral_comment
+		WHERE request_id = #{requestId}
+		ORDER BY comment_at ASC
+	</select>
+
+	<insert id="addComment"
+		parameterType="com.hospital.vo.ReferralCommentVO">
+		INSERT INTO referral_comment (
+		comment_id,
+		request_id,
+		doctor_id,
+		comment_text,
+		comment_at
+		) VALUES (
+		#{commentId},
+		#{requestId},
+		#{doctorId},
+		#{commentText},
+		SYSDATE
+		)
+	</insert>
+
+
+	<select id="getNextCommentId" resultType="int">
+		SELECT NVL(MAX(comment_id), 0) + 1 FROM referral_comment
+	</select>
+
+	<update id="updateComment" parameterType="ReferralCommentVO">
+		UPDATE referral_comment
+		SET comment_text = #{commentText},
+		comment_at = SYSDATE
+		WHERE comment_id = #{commentId}
+		AND doctor_id = #{doctorId}
+	</update>
+
+
+	<delete id="deleteComment" parameterType="map">
+		DELETE FROM REFERRAL_COMMENT
+		WHERE comment_id = #{commentId}
+		AND doctor_id = #{userId}
+	</delete>
+
+
+
+
+	<select id="countReferralByRecordId" parameterType="int"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM referral_requests
+		WHERE record_id = #{recordId}
+	</select>
+
+
+	<select id="isReferralAlreadySent" parameterType="int"
+		resultType="int">
+		SELECT COUNT(*) FROM referral_requests WHERE record_id = #{recordId}
+	</select>
+
+
+
+</mapper>

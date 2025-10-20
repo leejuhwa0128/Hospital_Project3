@@ -1,0 +1,85 @@
+@charset "UTF-8";
+
+
+
+/* 왼쪽 전체 박스 */
+.category-wrapper {
+  width: 200px;
+  position: relative;
+  align-self: flex-start;    /* ✅ 부모 flex에서 위쪽 정렬 */
+}
+.main-container {
+  display: flex;
+  align-items: flex-start; /* ✅ 위쪽 라인 맞추기 */
+}
+
+
+/* 메뉴 리스트 스타일 */
+.main-category {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.main-category li {
+  list-style: none;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.main-category li:last-child {
+  border-bottom: none;
+}
+
+.main-category li a {
+  text-decoration: none;
+  color: #1e3a8a;
+  display: block;
+  border-radius: 6px;
+  padding: 6px 10px;
+  transition: 0.2s;
+}
+
+.main-category li a:hover,
+.main-category li a.active {
+  background-color: #dbeafe;  /* 연한 파랑색 */
+  color: #1e3a8a;              /* 진한 파랑 텍스트 */
+}
+
+/* 검색영역 */
+.search-area {
+  margin-top: 20px;
+}
+
+.search-area form {
+  display: flex;
+  gap: 6px;
+}
+
+.search-area input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.search-area button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.search-area button img {
+  width: 18px;
+  height: 18px;
+}

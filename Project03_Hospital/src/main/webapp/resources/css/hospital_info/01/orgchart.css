@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+/* 박스 */
+.org-section-box{
+  max-width:1600px;          /* ⬆ 컨테이너 넓힘 */
+  width:96vw;
+  margin:20px auto;
+  padding:28px 24px 48px;    /* ⬆ 제목 위로(상단 패딩 축소) */
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 8px 28px rgba(0,0,0,.08);
+  box-sizing:border-box;
+  text-align:center;
+}
+
+/* 제목 */
+.org-text h2{
+  font-size:28px;
+  font-weight:700;
+  margin:0 0 20px;           /* 위 여백 제거 */
+  color:#0a2a5a;
+}
+
+/* 이미지 크게 */
+.org-section-box .org-image{
+  display:block;
+   /* 컨테이너 가로 가득 */
+  max-width:900px !important; /* 실제 표시 폭 (원하면 더 키우세요) */
+  height:auto;
+  margin:0 auto 30px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+
+/* 설명 */
+.org-description{
+  font-size:17px;
+  color:#333;
+  line-height:1.7;
+}
+
+/* 반응형 */
+@media (max-width:768px){
+  .org-section-box{padding:24px 16px 36px;}
+  .org-section-box .org-image{max-width:100% !important;}
+}

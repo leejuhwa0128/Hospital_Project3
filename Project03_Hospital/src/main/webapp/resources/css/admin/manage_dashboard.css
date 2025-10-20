@@ -1,0 +1,218 @@
+@charset "UTF-8";
+
+body {
+	font-family: 'Pretendard', sans-serif;
+	background-color: #f4f6fa;
+	padding: 30px;
+	margin: 0;
+	color: #2c3e50;
+}
+
+h2 {
+	font-size: 24px;
+	color: #1a237e;
+	font-weight: 700;
+	margin-bottom: 24px;
+}
+
+.dashboard-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 24px;
+}
+
+.card {
+	background: #ffffff;
+	border-radius: 12px;
+	padding: 20px 24px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: 160px;
+}
+
+.card h3 {
+	font-size: 18px;
+	font-weight: 600;
+	margin-bottom: 10px;
+	color: #34495e;
+}
+
+.card p {
+	font-size: 22px;
+	font-weight: bold;
+	color: #1a237e;
+	margin: 6px 0;
+}
+
+.card small {
+	font-size: 13px;
+	color: #7f8c8d;
+	margin-bottom: 10px;
+	display: block;
+}
+
+.chart-box {
+	height: 220px;
+	margin-top: 10px;
+}
+
+.feedback-item {
+	background: #f0f4f8;
+	border-left: 4px solid #4a2d2d;
+	padding: 10px 12px;
+	border-radius: 6px;
+	margin-bottom: 8px;
+	font-size: 14px;
+}
+
+.feedback-item strong {
+	font-weight: 600;
+	margin-left: 4px;
+	color: #2c3e50;
+}
+
+.feedback-item small {
+	float: right;
+	font-size: 12px;
+	color: #95a5a6;
+}
+
+.feedback-item div {
+	margin-top: 4px;
+	font-size: 13px;
+	color: #444;
+}
+
+.feedback-tag {
+	display: inline-block;
+	font-size: 11px;
+	font-weight: bold;
+	padding: 2px 6px;
+	border-radius: 4px;
+	margin-right: 6px;
+}
+
+.feedback-tag.received {
+	background-color: #dbeafe;
+	color: #1e40af;
+}
+
+.feedback-tag.completed {
+	background-color: #dcfce7;
+	color: #15803d;
+}
+
+.feedback-tag.pending {
+	background-color: #fee2e2;
+	color: #b91c1c;
+}
+
+.feedback-list {
+	max-height: 240px;
+	overflow-y: auto;
+}
+
+.feedback-more-wrapper {
+	margin-top: 10px;
+	text-align: right;
+}
+
+.feedback-more-btn {
+	padding: 8px 16px;
+	background: #4a2d2d;
+	color: #fff;
+	font-weight: 600;
+	font-size: 13px;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	text-align: center;
+	display: inline-block;
+	text-decoration: none;
+}
+
+.feedback-more-btn:hover {
+	background: #3b1f1f;
+}
+
+.dashboard-btn {
+	margin-top: 10px;
+	padding: 8px 16px;
+	background: #4a2d2d;
+	color: white;
+	font-weight: 600;
+	font-size: 13px;
+	border-radius: 6px;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.dashboard-btn:hover {
+	background: #3b1f1f;
+}
+
+.horizontal-section {
+	display: flex;
+	gap: 24px;
+	margin-top: 24px;
+}
+
+.half-card {
+	flex: 1;
+	min-width: 0;
+}
+
+/* 전체 레이아웃 상단 와이드 카드 3개 */
+.dashboard-top-row {
+	display: flex;
+	justify-content: space-between;
+	gap: 24px;
+	margin-bottom: 24px;
+}
+
+.top-card {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+/* 📌 상단 카드 전체 가운데 정렬용 */
+.top-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center; /* 텍스트 + 버튼 가운데 정렬 */
+	text-align: center;
+	padding: 30px 24px;
+	gap: 10px;
+}
+
+/* 📌 p, small 태그들도 가운데 정렬 자연스럽게 */
+.top-card p {
+	margin: 4px 0;
+	font-size: 24px;
+	font-weight: bold;
+	color: #1a237e;
+}
+
+.top-card small {
+	font-size: 13px;
+	color: #7f8c8d;
+	margin-bottom: 10px;
+	display: block;
+}
+
+/* 📌 전체 보기 버튼 가운데로 */
+.feedback-more-wrapper {
+	text-align: center;
+	margin-top: 10px;
+}
+/* 버튼 정렬용 */
+.btn-wrapper {
+	margin-top: auto;
+	text-align: center;
+}

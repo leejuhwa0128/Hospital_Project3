@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.PatientDAO">
+
+	<!-- 회원가입 -->
+<insert id="insertPatient" parameterType="com.hospital.vo.PatientVO">
+  <selectKey keyProperty="patientNo" resultType="int" order="BEFORE">
+    <![CDATA[
+      SELECT t.candidate
+      FROM (
+        SELECT FLOOR(DBMS_RANDOM.VALUE(0, 90000000)) + 10000000 AS candidate
+        FROM dual
+        CONNECT BY LEVEL <= 100
+      ) t
+      WHERE NOT EXISTS (
+        SELECT 1 FROM PATIENTS p WHERE p.PATIENT_NO = t.candidate
+      )
+      AND ROWNUM = 1
+    ]]>
+  </selectKey>
+
+  INSERT INTO PATIENTS (
+    PATIENT_NO, PATIENT_USER_ID, PATIENT_PASSWORD, PATIENT_NAME,
+    PATIENT_RRN, PATIENT_GENDER, PATIENT_PHONE, PATIENT_EMAIL, PATIENT_CREATED_AT
+  ) VALUES (
+    #{patientNo}, #{patientUserId}, #{patientPassword}, #{patientName},
+    #{patientRrn}, #{patientGender}, #{patientPhone}, #{patientEmail}, SYSDATE
+  )
+</insert>
+
+	<!-- 회원가입(비회원예약 했던 환자) -->
+	<update id="updatePatientToMember"
+		parameterType="com.hospital.vo.PatientVO">
+		UPDATE patients
+		SET patient_user_id = #{patientUserId},
+		patient_password = #{patientPassword},
+		patient_gender =
+		#{patientGender},
+		patient_email = #{patientEmail}
+		WHERE patient_name =
+		#{patientName}
+		AND patient_rrn = #{patientRrn}
+		AND patient_user_id IS
+		NULL
+	</update>
+
+	<!-- 회원가입(비회원예약 했던 환자 조회용) -->
+	<select id="findNonMemberPatient"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients
+		WHERE patient_name = #{patientName}
+		AND patient_rrn = #{patientRrn}
+		AND patient_user_id IS NULL
+	</select>
+
+	<!-- 로그인 -->
+	<select id="login" parameterType="com.hospital.vo.PatientVO"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients
+		WHERE patient_user_id =
+		#{patientUserId}
+		AND patient_password = #{patientPassword}
+	</select>
+
+	<!-- 중복 검사: ID -->
+	<select id="existsByUserId" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM patients WHERE patient_user_id =
+		#{userId}
+	</select>
+
+	<!-- 중복 검사: 주민등록번호 -->
+	<select id="existsByRrn" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM patients WHERE patient_rrn = #{rrn}
+	</select>
+
+	<!-- 중복 검사: 이메일 -->
+	<select id="existsByEmail" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*) FROM patients WHERE patient_email =
+		#{email}
+	</select>
+
+	<!-- 전체 환자 목록 -->
+	<select id="getAllPatients"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients ORDER BY patient_no DESC
+	</select>
+
+	<!-- 특정 환자 기록 -->
+	<select id="getPatientByNo" parameterType="int"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients WHERE patient_no = #{patientNo}
+	</select>
+
+	<!-- 검색 (ID 또는 이름) -->
+	<select id="searchPatients" parameterType="string"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients
+		WHERE LOWER(patient_user_id) LIKE '%'
+		|| LOWER(#{keyword}) || '%'
+		OR LOWER(patient_name) LIKE '%' ||
+		LOWER(#{keyword}) || '%'
+		ORDER BY patient_no DESC
+	</select>
+
+	<!-- 환자 삭제 -->
+	<delete id="deletePatientByUserId" parameterType="String">
+		DELETE FROM
+		patients WHERE patient_user_id = #{patientUserId}
+	</delete>
+
+
+
+	<delete id="deletePatient" parameterType="int">
+		DELETE FROM patients
+		WHERE patient_no = #{patientNo}
+	</delete>
+
+	<delete id="logdeletePatient" parameterType="String">
+		DELETE FROM patients
+		WHERE PATIENT_USER_ID = #{patientUserId}
+	</delete>
+
+	<insert id="insertSocialPatient"
+		parameterType="com.hospital.vo.PatientVO">
+		INSERT INTO patients (
+		patient_no, patient_user_id,
+		patient_password,
+		patient_name, patient_rrn, patient_gender,
+		patient_phone, patient_email
+		) VALUES (
+		seq_patient_no.NEXTVAL,
+		#{patientUserId}, '',
+		#{patientName}, #{patientRrn}, '기타', '',
+		#{patientEmail}
+		)
+	</insert>
+
+	<delete id="deletePatientByNo" parameterType="int">
+		DELETE FROM
+		patients WHERE patient_no = #{patientNo}
+	</delete>
+
+
+	<select id="findPatientByEmail" parameterType="string"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients WHERE patient_email = #{email}
+	</select>
+
+
+
+	<!-- 회원정보 + 비밀번호 수정 -->
+	<update id="updatePatientInfoAndPassword"
+		parameterType="com.hospital.vo.PatientVO">
+		UPDATE PATIENTS
+		SET
+		PATIENT_EMAIL = #{patientEmail},
+		PATIENT_PHONE = #{patientPhone},
+		PATIENT_PASSWORD = #{patientPassword}
+		WHERE PATIENT_NO = #{patientNo}
+	</update>
+
+	<!-- 회원 단건 조회 -->
+	<select id="getPatientById"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT
+		PATIENT_NO AS patientNo,
+		PATIENT_USER_ID AS
+		patientUserId,
+		PATIENT_PASSWORD AS patientPassword,
+		PATIENT_NAME AS
+		patientName,
+		PATIENT_RRN AS patientRrn,
+		PATIENT_GENDER AS patientGender,
+		PATIENT_PHONE AS patientPhone,
+		PATIENT_EMAIL AS patientEmail,
+		PATIENT_CREATED_AT AS patientCreatedAt
+		FROM PATIENTS
+		WHERE
+		PATIENT_USER_ID = #{patientUserId}
+	</select>
+
+
+
+	<!-- 아이디 찾기 -->
+	<select id="findPatientId" resultType="java.lang.String"
+		parameterType="map">
+		SELECT patient_user_id
+		FROM patients
+		WHERE patient_name =
+		#{name}
+		AND patient_phone = #{patientPhone}
+	</select>
+
+
+
+	<select id="findPatientForPassword" resultType="int">
+		SELECT COUNT(*)
+		FROM patients
+		WHERE patient_user_id = #{id}
+		AND patient_rrn = #{rrn}
+	</select>
+
+	<!-- 임시 비밀번호 업데이트 -->
+	<update id="updateTempPassword">
+		UPDATE patients
+		SET patient_password = #{tempPassword}
+		WHERE patient_user_id = #{id}
+	</update>
+
+
+
+	<select id="selectPatientByUserId" parameterType="string"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients WHERE patient_user_id = #{userId}
+	</select>
+
+
+
+	<select id="selectPatientByEmail" parameterType="string"
+		resultType="com.hospital.vo.PatientVO">
+		SELECT * FROM patients WHERE patient_email = #{email}
+	</select>
+
+	<select id="countPatients" resultType="int">
+		SELECT COUNT(*) FROM
+		patients
+	</select>
+
+	<select id="isRrnDuplicated" resultType="boolean"
+		parameterType="string">
+		SELECT COUNT(*) > 0 FROM patients WHERE rrn = #{rrn}
+	</select>
+		<!-- 변경 후 -->
+		<select id="existsByPhone" resultType="int"
+			parameterType="string">
+			SELECT COUNT(*) FROM patients WHERE patient_phone = #{phone}
+		</select>
+		
+		<select id="getPatientByUserId" parameterType="string"
+            resultType="com.hospital.vo.PatientVO">
+        SELECT
+            patient_no        AS patientNo,
+            patient_user_id   AS patientUserId,  -- 카카오 가입 시 set했던 필드
+            patient_name      AS patientName,
+            patient_rrn       AS patientRrn,
+            patient_phone     AS patientPhone,
+            patient_email     AS patientEmail,
+            patient_gender    AS patientGender
+        FROM patients
+        WHERE patient_user_id = #{userId}
+    </select>
+
+	<!-- ✅ 비회원화: 아이디/비번/이메일/성별 NULL 처리 -->
+	<update id="stripToGuest" parameterType="int">
+		UPDATE patients
+		<set>
+			patient_user_id = NULL,
+			patient_password = NULL,
+			patient_email =
+			NULL,
+			patient_gender = NULL
+		</set>
+		WHERE patient_no = #{patientNo}
+	</update>
+
+</mapper>

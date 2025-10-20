@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.mapper.Doctor2ScheduleMapper">
+
+    
+
+  <select id="getScheduleByDoctorName" parameterType="String" resultType="com.hospital.vo.DoctorScheduleVO">
+    SELECT 
+        schedule_id AS scheduleId,
+        doctor_id AS doctorId,
+        schedule_date AS scheduleDate,
+        time_slot AS time_slot,
+        schedule_time AS scheduleTime,
+        note,
+        created_at AS created_at
+    FROM doctor_schedules
+    WHERE doctor_id IN (
+        SELECT user_id FROM users
+        WHERE name = #{name} AND role = 'doctor'
+    )
+    ORDER BY schedule_date
+</select>
+
+	<select id="selectRecordsByDoctorId" parameterType="string"
+		resultType="com.hospital.vo.MedicalRecordVO">
+		SELECT
+		mr.*,
+		p.patient_name AS patientName
+		FROM
+		medical_records mr
+		JOIN reservations r ON mr.reservation_id =
+		r.reservation_id
+		JOIN patients p ON r.patient_no = p.patient_no
+		WHERE
+		mr.doctor_id = #{doctorId}
+		ORDER BY mr.record_date DESC
+	</select>
+
+
+
+
+
+</mapper>

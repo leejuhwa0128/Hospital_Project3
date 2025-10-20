@@ -1,0 +1,121 @@
+@charset "UTF-8";
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f9fbfd;
+    padding: 40px;
+}
+
+.main-container {
+    display: flex;
+}
+
+.content-area {
+    flex: 1;
+    background: #fff;
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-left: 30px;
+    margin-top: 40px;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+h2 .emoji {
+    margin-right: 10px;
+    font-size: 28px;
+}
+
+/* ✅ 폼 요소 스타일 */
+.styled-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px dashed #e9ecef;
+    padding-bottom: 15px;
+}
+
+.form-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #34495e;
+    width: 150px;
+    flex-shrink: 0;
+}
+
+.form-group .form-control {
+    flex-grow: 1;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #555;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+/* ✅ 버튼 영역 스타일 */
+.button-area {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.button-area button,
+.button-area a {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0 5px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.button-area .btn-submit {
+    background-color: #007bff;
+    color: white;
+}
+
+.button-area .btn-submit:hover {
+    background-color: #0056b3;
+}
+
+.button-area .btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+
+.button-area .btn-cancel:hover {
+    background-color: #5a6268;
+}

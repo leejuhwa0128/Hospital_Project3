@@ -1,0 +1,182 @@
+@charset "UTF-8";
+
+/* ===== Theme ===== */
+:root{
+  --bg:#f5f7fb;
+  --ink:#111;
+  --muted:#6b7280;
+  --brand:#2563eb;      /* 버튼/포커스 파랑 */
+  --brand-navy:#1e3a8a; /* 제목 남색 */
+  --line:#e5e7eb;
+  --card:#fff;
+  --shadow:0 10px 30px rgba(0,0,0,.06);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Noto Sans KR',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+
+/* ===== Layout ===== */
+.main-container{ display:flex; gap:16px; }
+.sidebar{ width:300px; margin-left:50px; padding-left:20px; }
+.content-area{ padding:0 12px; flex:1; }
+
+/* ===== Page Wrapper ===== */
+.community-page {
+  max-width:1600px;
+  margin: 40px auto 20px; 
+  padding: 0 10px;
+}
+
+.community-page-card {
+  background:var(--card);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+}
+/* ===== Header ===== */
+.community-head h2{
+  margin:0 0 8px 0;
+  font-size:28px;
+  font-weight:800;
+  color:var(--brand-navy);
+}
+.community-head .lead{
+  margin:0 0 16px 0;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+/* ===== Grid ===== */
+.card-grid{
+	max-width: 2000px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:16px;
+}
+
+/* ===== Card ===== */
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 6px 18px rgba(0,0,0,.05);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0,0,0,.08);
+}
+
+.card-thumbnail img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  display:block;
+}
+
+.card-content{
+  padding:16px 16px 18px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* 배지 */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:26px;
+  padding:0 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  color:#fff;
+  align-self:flex-start;
+}
+
+.card-title{ margin:0; font-size:18px; font-weight:700; }
+.card-date{ margin:0; font-size:13px; color:var(--muted); }
+.card-description{ margin:2px 0 10px 0; color:#374151; line-height:1.6; min-height:44px; }
+
+/* 버튼 */
+.card-link{
+  align-self:flex-end;
+  margin-left:auto;
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:10px;
+  background:var(--brand);
+  color:#fff;
+  font-size:14px;
+  text-decoration:none;
+  transition:opacity .15s ease;
+}
+.card-link:hover{ opacity:.9; }
+
+/* ===== Pagination ===== */
+.pagination-row{
+  display:flex;
+  justify-content:center;
+  margin-top:24px;
+}
+.pagination{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.pagination a,
+.pagination span{
+  display:inline-block;
+  padding:8px 12px;
+  border:1px solid var(--brand);
+  background:#fff;
+  color:var(--brand);
+  text-decoration:none;
+  border-radius:10px;
+  font-size:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,.03);
+  transition: background .15s, color .15s, transform .1s, border-color .15s;
+}
+.pagination a:hover{
+  background:var(--brand);
+  color:#fff;
+  transform: translateY(-1px);
+}
+.pagination a.active{
+  background:var(--brand);
+  color:#fff;
+  border-color:transparent;
+}
+.pagination a.disabled{ opacity:.45; pointer-events:none; }
+
+.pagination a.arrow{
+  padding:8px 14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.pagination a.arrow::before{ content:'←'; font-weight:700; }
+.pagination a.arrow-next::before{ content:'→'; font-weight:700; }
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px){
+  .sidebar{ margin-left:12px; width:260px; }
+  .card-grid{ grid-template-columns: repeat(2, 1fr); }
+  .card-thumbnail img{ height:170px; }
+}
+@media (max-width: 640px){
+  .sidebar{ display:none; }   /* 필요 없으면 제거 */
+  .community-page-card{ padding:22px; }
+  .card-grid{ grid-template-columns: 1fr; }
+  .card-thumbnail img{ height:160px; }
+}

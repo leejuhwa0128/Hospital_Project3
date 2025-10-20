@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hospital.dao.DepartmentDAO">
+
+	<!-- 공통 칼럼 -->
+	<sql id="deptColumns"><![CDATA[
+    d.dept_id        AS deptId,
+    d.name           AS name,
+    d.description    AS description,
+    d.head_doctor_id AS headDoctorid,
+    d.phone          AS phone,
+    d.created_at     AS createdAt,
+    d.intro          AS intro,
+    d.main_diseases  AS mainDiseases
+  ]]></sql>
+
+	<!-- 전체 진료과 -->
+	<select id="getAllDepartments"
+		resultType="com.hospital.vo.DepartmentVO">
+    <![CDATA[
+    SELECT
+      d.dept_id        AS deptId,
+      d.name           AS name,
+      d.description    AS description,
+      d.head_doctor_id AS headDoctorid,
+      d.phone          AS phone,
+      d.created_at     AS createdAt,
+      d.intro          AS intro,
+      d.main_diseases  AS mainDiseases,
+      d.location_guide AS locationGuide
+    FROM departments d
+    ORDER BY d.name
+    ]]>
+	</select>
+
+	 <select id="searchDepartments" parameterType="string" resultType="com.hospital.vo.DepartmentVO">
+    <![CDATA[
+    SELECT
+      d.dept_id AS deptId,
+      d.name AS name,
+      d.description AS description,
+      d.head_doctor_id AS headDoctorid,
+      d.phone AS phone,
+      d.created_at AS createdAt,
+      d.intro AS intro,
+      d.main_diseases AS mainDiseases
+    FROM departments d
+    ]]>
+    <where>
+        <if test="keyword != null and keyword != ''">
+            <![CDATA[
+            ( LOWER(d.name) LIKE LOWER('%' || #{keyword} || '%')
+              OR LOWER(d.description) LIKE LOWER('%' || #{keyword} || '%')
+              OR LOWER(d.main_diseases) LIKE LOWER('%' || #{keyword} || '%') )
+            ]]>
+        </if>
+    </where>
+    <![CDATA[ ORDER BY d.name ]]>
+</select>
+
+
+	<!-- 진료과 상세 -->
+	<select id="getDepartmentById" parameterType="string"
+		resultType="com.hospital.vo.DepartmentVO">
+    <![CDATA[
+    SELECT
+      d.dept_id        AS deptId,
+      d.name           AS name,
+      d.description    AS description,
+      d.head_doctor_id AS headDoctorid,
+      d.phone          AS phone,
+      d.created_at     AS createdAt,
+      d.intro          AS intro,
+      d.main_diseases  AS mainDiseases,
+      d.location_guide AS locationGuide
+    FROM departments d
+    WHERE d.dept_id = #{deptId}
+    ]]>
+	</select>
+
+	<!-- ===== 의료진 ===== -->
+
+	<!-- 의사 수 (bind 제거: null 안전) -->
+	<select id="countDoctors" parameterType="map" resultType="int">
+  <![CDATA[
+  SELECT COUNT(1)
+  FROM doctor_info di
+  JOIN users u ON u.user_id = di.doctor_id
+  ]]>
+		<where>
+			<if test="deptId != null and deptId != ''">
+      <![CDATA[ di.dept_id = #{deptId} ]]>
+			</if>
+			<if test="keyword != null and keyword != ''">
+      <![CDATA[
+      AND (
+        LOWER(u.name) LIKE LOWER('%' || #{keyword} || '%')
+        OR LOWER(di.specialty) LIKE LOWER('%' || #{keyword} || '%')
+      )
+      ]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="getDoctors" parameterType="map"
+		resultType="com.hospital.vo.DoctorVO">
+  <![CDATA[
+  SELECT *
+  FROM (
+    SELECT
+      u.user_id                 AS doctorId,
+      u.name                    AS name,
+      di.dept_id                AS deptId,
+      d.name                    AS deptName,
+      di.specialty              AS specialty,
+      di.bio                    AS bio,
+      di.profile_image_path     AS profileImagePath,
+      di.created_at             AS createdAt,
+      ROW_NUMBER() OVER (ORDER BY u.name) AS rn
+    FROM doctor_info di
+    JOIN users u ON u.user_id = di.doctor_id
+    LEFT JOIN departments d ON d.dept_id = di.dept_id
+  ]]>
+		<where>
+			<if test="deptId != null and deptId != ''">
+      <![CDATA[ di.dept_id = #{deptId} ]]>
+			</if>
+			<if test="keyword != null and keyword != ''">
+      <![CDATA[
+      AND (
+        LOWER(u.name) LIKE LOWER('%' || #{keyword} || '%')
+        OR LOWER(di.specialty) LIKE LOWER('%' || #{keyword} || '%')
+      )
+      ]]>
+			</if>
+		</where>
+  <![CDATA[
+  )
+  WHERE rn BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+  ]]>
+	</select>
+
+
+	<select id="getDoctorsByDeptId" parameterType="string"
+		resultType="com.hospital.vo.DoctorVO">
+    <![CDATA[
+    SELECT
+      u.user_id             AS doctorId,
+      u.name                AS name,
+      di.dept_id            AS deptId,
+      d.name                AS deptName,
+      di.specialty          AS specialty,
+      di.bio                AS bio,
+      di.profile_image_path AS profileImagePath,
+      di.created_at         AS createdAt
+    FROM doctor_info di
+    JOIN users u ON u.user_id = di.doctor_id
+    LEFT JOIN departments d ON d.dept_id = di.dept_id
+    WHERE di.dept_id = #{deptId}
+    ORDER BY u.name
+    ]]>
+	</select>
+
+	<select id="getDoctorById" parameterType="string"
+		resultType="com.hospital.vo.DoctorVO">
+    <![CDATA[
+    SELECT
+      u.user_id             AS doctorId,
+      u.name                AS name,
+      di.dept_id            AS deptId,
+      d.name                AS deptName,
+      di.specialty          AS specialty,
+      di.bio                AS bio,
+      di.profile_image_path AS profileImagePath,
+      di.created_at         AS createdAt
+    FROM doctor_info di
+    JOIN users u ON u.user_id = di.doctor_id
+    LEFT JOIN departments d ON d.dept_id = di.dept_id
+    WHERE di.doctor_id = #{doctorId}
+    ]]>
+	</select>
+
+	<!-- ===== 스케줄 ===== -->
+
+	<select id="getDoctorSchedules" parameterType="string"
+		resultType="com.hospital.vo.DoctorScheduleVO">
+    <![CDATA[
+    SELECT
+      s.schedule_id                AS scheduleId,
+      s.doctor_id                  AS doctorId,
+      s.schedule_date              AS scheduleDate,
+      TRIM(s.time_slot)            AS timeSlot,
+      NVL(s.schedule_type, s.note) AS scheduleType,
+      s.note                       AS note,
+      s.schedule_time              AS scheduleTime,
+      s.created_at                 AS createdAt
+    FROM doctor_schedules s
+    WHERE s.doctor_id = #{doctorId}
+    ORDER BY s.schedule_date,
+             DECODE(TRIM(s.time_slot), '오전', 0, '오후', 1, 9)
+    ]]>
+	</select>
+
+	<select id="findSchedulesInRange" parameterType="map"
+		resultType="com.hospital.vo.DoctorScheduleVO">
+    <![CDATA[
+    SELECT
+      schedule_id    AS scheduleId,
+      doctor_id      AS doctorId,
+      schedule_date  AS scheduleDate,
+      time_slot      AS TimeSlot,
+      schedule_time  AS scheduleTime,
+      note           AS scheduleType,
+      note           AS note,
+      created_at     AS createdAt
+    FROM doctor_schedules
+    WHERE doctor_id = #{doctorId}
+      AND TRUNC(schedule_date) BETWEEN TRUNC(#{startDate}) AND TRUNC(#{endDate})
+    ORDER BY schedule_date, DECODE(time_slot, '오전', 1, '오후', 2, 99)
+    ]]>
+	</select>
+	
+	<select id="searchDoctors" parameterType="string" resultType="com.hospital.vo.DoctorVO">
+    <![CDATA[
+    SELECT
+      u.user_id AS doctorId,
+      u.name AS name,
+      di.dept_id AS deptId,
+      d.name AS deptName,
+      di.specialty AS specialty,
+      di.bio AS bio,
+      di.profile_image_path AS profileImagePath,
+      di.created_at AS createdAt
+    FROM doctor_info di
+    JOIN users u ON u.user_id = di.doctor_id
+    LEFT JOIN departments d ON d.dept_id = di.dept_id
+    ]]>
+    <where>
+        <if test="_parameter != null and _parameter != ''">
+            <![CDATA[
+            (
+                LOWER(u.name) LIKE LOWER('%' || #{_parameter} || '%')
+                OR LOWER(di.specialty) LIKE LOWER('%' || #{_parameter} || '%')
+                OR LOWER(di.bio) LIKE LOWER('%' || #{_parameter} || '%')
+            )
+            ]]>
+        </if>
+    </where>
+    <![CDATA[
+    ORDER BY u.name
+    ]]>
+
+</select>
+	
+
+</mapper>

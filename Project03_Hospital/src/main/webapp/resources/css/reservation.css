@@ -1,0 +1,230 @@
+@charset "UTF-8";
+
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+	background: #f9fbfd;
+	margin: 0;
+	padding: 50px;
+}
+
+.container {
+	max-width: 900px;
+	margin: auto;
+	background: #fff;
+	padding: 40px;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+	margin-top: 80px;
+}
+
+h2 {
+	font-size: 26px;
+	color: #007bff;
+	border-bottom: 2px solid #e0eaff;
+	padding-bottom: 10px;
+	margin-bottom: 30px;
+}
+
+h3, h4, h5 {
+	color: #007bff;
+	margin-top: 0;
+}
+
+.info-box {
+	font-size: 15px;
+	color: #333;
+	line-height: 1.8;
+	margin-bottom: 30px;
+}
+
+.highlight {
+	background: #fff3cd;
+	padding: 8px 12px;
+	border-left: 4px solid #ffc107;
+	margin: 10px 0;
+	border-radius: 4px;
+}
+
+.step-title {
+	font-size: 18px;
+	margin: 20px 0 10px;
+	font-weight: bold;
+	color: #007bff;
+}
+
+.step-box {
+	flex: 1;
+	padding: 20px;
+	background: #f1f7ff;
+	border-radius: 8px;
+	margin-bottom: 30px;
+	text-align: center;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.step-box ul {
+	padding-left: 20px;
+}
+
+.tab-container {
+	margin-top: 50px;
+}
+
+.tab-buttons {
+	display: flex;
+	border-bottom: 2px solid #eee;
+}
+
+.tab-btn {
+	flex: 1;
+	padding: 12px;
+	border: none;
+	background: #f9f9f9;
+	font-weight: bold;
+	color: #333;
+	cursor: pointer;
+	border-bottom: 3px solid transparent;
+	transition: background 0.2s;
+}
+
+.tab-btn.active {
+	background: white;
+	border-bottom: 3px solid #007bff;
+	color: #007bff;
+}
+
+.tab-content {
+	padding: 20px 10px;
+	background: white;
+}
+
+.section-box {
+	background: transparent;            /* 배경 제거 */
+	padding: 25px 0;                    /* 위아래 여백만 유지 */
+	border-left: none;                 /* 좌측 강조선 제거 */
+	border-bottom: 1px solid #eee;     /* 아래 얇은 구분선만 */
+	margin-bottom: 40px;
+}
+
+
+.btn-blue {
+	display: inline-block;
+	background: #007bff;
+	color: #fff;
+	padding: 10px 24px;
+	border-radius: 6px;
+	text-decoration: none;
+	font-weight: bold;
+	transition: 0.3s;
+}
+
+.btn-blue:hover {
+	background: #0056b3;
+}
+
+.btn-area {
+	text-align: center;
+}
+
+.table-box table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: center;
+	margin-top: 10px;
+}
+
+.table-box th {
+	background: #f1f1f1;
+	padding: 10px;
+}
+
+.table-box td {
+	padding: 10px;
+}
+
+/* 공통 구조 유지 */
+.page-title {
+	text-align: center;
+	color: #007bff;
+	margin-bottom: 40px;
+	font-size: 24px;
+}
+
+.alert-box.success {
+	padding: 15px;
+	background-color: #e6f7ff;
+	color: #007bff;
+	border-radius: 6px;
+	margin-bottom: 20px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.text-blue {
+	color: #007bff;
+}
+
+/* 입력 폼 정리 */
+.input-box {
+	margin-bottom: 20px;
+}
+
+.input-box label {
+	display: block;
+	font-weight: bold;
+	margin-bottom: 6px;
+}
+
+.input-box input[type="text"],
+.input-box input[type="email"],
+.input-box textarea {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+
+.input-box textarea {
+	height: 120px;
+	resize: vertical;
+}
+
+/* 버튼 동일 스타일 */
+.submit-btn {
+	display: block;
+	width: 200px;
+	margin: 30px auto 0; /* 가운데 정렬 + 위 여백 */
+	padding: 10px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.3s;
+	text-align: center;
+}
+
+.submit-btn:hover {
+	background-color: #0056b3;
+}
+
+
+
+.section-box-1 {
+	margin-bottom: 40px;
+	border-left: 4px solid #007bff;
+	padding-left: 20px;
+}
+
+.section-box-1 p {
+	color: #444;
+	font-size: 15px;
+	line-height: 1.8;
+}
+
+
+
